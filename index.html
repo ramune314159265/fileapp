@@ -1,0 +1,3152 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta prefix=”og:http://ogp.me/ns#”>
+	<meta property="og:url" content="180.196.185.34:25000/file" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="ファイル置き場" />
+	<meta property="og:description" content="ファイルをアップロードするところです" />
+	<meta property="og:site_name" content="ファイル置き場" />
+	<meta property="og:image" content="/file/fileapp/src/ico/ico.png" />
+	<link rel="icon" href="/fileapp/src/ico/ico.png" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="shortcut icon" href="/fileapp/src/ico/favicon.png">
+	<link rel="manifest" href="/fileapp/src/manifest.json">
+	<meta id="themecolor" name="theme-color" content="#f4f4f4">
+	<link rel="apple-touch-icon" href="/fileapp/src/ico/ico.png">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<title>ファイル置き場</title>
+	<meta name="description" content="ファイルとか動画とかいろいろアップロードするところです">
+	<style>
+		:root {
+			overflow: hidden;
+		}
+
+		.light-mode {
+			--background-primary: #ffffff;
+			--background-secondary: #f4f4f4;
+			--accent-color: #58b058;
+			--green: #58b058;
+			--blue: #5395ee;
+			--red: #df3939;
+			--black: #000000;
+			--white: #ffffff;
+			--darkgrey: grey;
+			--background-color: #3a3a3a74;
+			--text-color: black;
+			--text-opposite-color: white;
+			--shadow: 1px 1px 8px var(--background-color);
+			--border-radius: 10px;
+		}
+
+		.dark-mode {
+			--background-primary: #161616;
+			--background-secondary: #2a2a2a;
+			--accent-color: #005a2c;
+			--green: #58b058;
+			--blue: #5395ee;
+			--red: #df3939;
+			--black: #000000;
+			--white: #ffffff;
+			--darkgrey: grey;
+			--background-color: #000000b0;
+			--text-color: white;
+			--text-opposite-color: black;
+			--shadow: 1px 1px 7px #000000a8;
+			--border-radius: 10px;
+		}
+
+		.dark-mode.deep-dark {
+			--background-primary: #000000;
+			--background-secondary: #121212;
+			--accent-color: #00360c;
+			--shadow: 1px 1px 10px 2px #000000c9;
+		}
+
+		*,
+		*:before,
+		*:after {
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+			color: var(--text-color);
+			stroke: var(--text-color);
+		}
+
+		::-webkit-scrollbar {
+			width: 8px;
+			height: 8px;
+		}
+
+		::-webkit-scrollbar-track {
+			background-color: var(--background-secondary);
+		}
+
+		::-webkit-scrollbar-thumb {
+			background-color: var(--darkgrey);
+			border-radius: var(--border-radius);
+		}
+
+		input[type=text],
+		input[type=url],
+		input[type=number],
+		option,
+		select {
+			background: var(--background-secondary);
+			border-radius: var(--border-radius);
+			border: none;
+			box-shadow: var(--shadow);
+			height: 2rem;
+			font-size: 1.2rem;
+			margin: 5px;
+			font-family: 'Noto Sans JP', sans-serif;
+		}
+
+		input {
+			accent-color: var(--accent-color);
+		}
+
+		hr {
+			width: 100%;
+			margin: 2px 0px;
+			border: none;
+			height: 1px;
+			background: var(--darkgrey);
+		}
+
+		button {
+			font-family: inherit;
+		}
+
+		body {
+			padding: 0px;
+			margin: 0px;
+			background-color: var(--background-primary);
+			height: 100vh;
+			overflow-y: auto;
+			font-family: 'Noto Sans JP', sans-serif;
+			touch-action: pan-y;
+			touch-callout: none;
+			-webkit-touch-callout: none;
+		}
+
+		header {
+			height: calc(env(safe-area-inset-top) + 2.3rem);
+			font-size: 1.1rem;
+			background: var(--background-secondary);
+			width: 100vw;
+			padding-top: calc(env(safe-area-inset-top) + 5px);
+			padding-right: 5px;
+			padding-bottom: 5px;
+			padding-left: 5px;
+			box-sizing: border-box;
+			color: var(--text-color);
+			position: fixed;
+			top: 0px;
+			left: 0px;
+			-webkit-user-select: none;
+			user-select: none;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			justify-content: space-between;
+			align-content: center;
+			box-shadow: var(--shadow);
+			z-index: 100;
+		}
+
+		.control {
+			width: 100%;
+			height: 10vh;
+			margin-top: 5rem;
+			display: flex;
+			flex-wrap: nowrap;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+		}
+
+		button.upload>svg {
+			height: 2rem;
+			stroke: var(--white);
+		}
+
+		button.upload {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			align-content: center;
+			align-items: center;
+			font-size: 1.2rem;
+			border: none;
+			border-radius: var(--border-radius);
+			margin: 5px;
+			background: var(--accent-color);
+			color: var(--white);
+			cursor: pointer;
+			user-select: none;
+			font-weight: bold;
+		}
+
+		.body {
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+			background: var(--background-primary);
+			overflow: hidden;
+		}
+
+		.fileControl {
+			width: 70%;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-content: center;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.modalbg {
+			background-color: var(--background-color);
+			width: 100vw;
+			height: 100%;
+			z-index: 9999;
+			position: fixed;
+			top: 0px;
+			left: 0px;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			align-content: center;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.modal {
+			background: var(--background-primary);
+			width: 60%;
+			height: 70%;
+			min-height: 400px;
+			min-width: 700px;
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+			align-content: center;
+			justify-content: flex-start;
+			align-items: center;
+			position: relative;
+			border-radius: var(--border-radius);
+		}
+
+		.modal__title {
+			width: 100%;
+			height: 2rem;
+			background-color: var(--background-secondary);
+			color: var(--text-color);
+			display: flex;
+			align-content: center;
+			align-items: center;
+			padding: 5px;
+			box-sizing: border-box;
+			font-size: 1.2rem;
+			-webkit-user-select: none;
+			user-select: none;
+			text-overflow: ellipsis;
+			-background-primary-space: nowrap;
+			overflow: hidden;
+			border-radius: var(--border-radius);
+		}
+
+		.modal__body {
+			width: 100%;
+			height: calc(100% - 2rem);
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+			padding: 20px;
+			box-sizing: border-box;
+			color: var(--black);
+			overflow-y: overlay;
+		}
+
+		.modal>svg {
+			position: absolute;
+			top: 0px;
+			right: 0px;
+			stroke: var(--black);
+			height: 2rem;
+			cursor: pointer;
+		}
+
+		.progress {
+			width: 100vw;
+			height: 2.5rem;
+			position: fixed;
+			bottom: 0px;
+			background-color: var(--background-secondary);
+		}
+
+		.progress__body {
+			background-color: var(--accent-color);
+			height: 100%;
+			width: 0%;
+			display: flex;
+			z-index: 999;
+			flex-direction: column;
+			flex-wrap: nowrap;
+			align-items: center;
+			transition: all 0.3s;
+			transition-timing-function: linear;
+		}
+
+		span.progressspan {
+			position: fixed;
+			left: 0px;
+			bottom: 0.5rem;
+			z-index: 1000;
+			font-size: 0.9rem;
+			transition: all 0.35s;
+			display: block;
+			width: 100%;
+			text-align: center;
+			user-select: none;
+			-webkit-user-select: none;
+		}
+
+		div#drop-zone {
+			display: flex;
+			width: 100%;
+			padding: 5px;
+			height: 130px;
+			align-items: center;
+			flex-direction: column;
+			border: 5px dashed var(--text-opposite-color);
+			box-sizing: border-box;
+			justify-content: center;
+			user-select: none;
+			-webkit-user-select: none;
+		}
+
+		.uploadBtns {
+			display: flex;
+			margin-top: 30px;
+			flex-wrap: nowrap;
+			flex-direction: row;
+			align-items: center;
+			justify-content: flex-start;
+		}
+
+		.flexCenter {
+			width: 100%;
+			margin: 20px 0px;
+			display: flex;
+			flex-wrap: nowrap;
+			flex-direction: row;
+			justify-content: center;
+		}
+
+		.files,
+		.uploadfiles {
+			width: 95%;
+			display: grid;
+			gap: 10px;
+			overflow-y: visible;
+			justify-content: center;
+			grid-template-columns: repeat(auto-fill, 300px);
+			margin-bottom: 100px;
+		}
+
+		.fileChild {
+			width: 300px;
+			box-sizing: border-box;
+			height: 210px;
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+			max-width: 350px;
+			cursor: pointer;
+		}
+
+		.fileico {
+			height: 85%;
+			display: flex;
+			flex-direction: column;
+			align-content: center;
+			justify-content: center;
+			align-items: center;
+			user-select: none;
+			background: var(--background-secondary);
+			border-radius: var(--border-radius);
+		}
+
+		.filemenu {
+			height: 24px;
+			aspect-ratio: 1/1;
+			background: var(--text-color);
+			-webkit-mask-image: url(/fileapp/src/ico/menu.svg);
+			mask-image: url(/fileapp/src/ico/menu.svg);
+			-webkit-mask-repeat: no-repeat;
+			mask-repeat: no-repeat;
+		}
+
+		.fileinfo {
+			-background-primary-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			user-select: none;
+			-webkit-user-select: none;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			align-content: center;
+
+			justify-content: space-between;
+		}
+
+		.ViewControl {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			align-content: center;
+			align-items: center;
+		}
+
+		.reloadFile {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: var(--background-secondary);
+			border-radius: 100vh;
+			padding: 3px;
+			width: 2rem;
+			height: 2rem;
+			transition: background 0.2s;
+			cursor: pointer;
+			margin-left: 5px;
+			border: none;
+		}
+
+		.reloadFile:hover {
+			background: #bebebe;
+		}
+
+		.contextmenu {
+			position: absolute;
+			top: 0;
+			left: 0;
+			background: var(--background-primary);
+			padding: 6px 10px;
+			border-radius: 5px;
+			box-shadow: var(--shadow);
+			-webkit-user-select: none;
+			user-select: none;
+			flex-direction: column;
+			width: 200px;
+			z-index: 101;
+		}
+
+		.contextmenuChild {
+			margin: 1px 0px;
+			font-size: 0.9rem;
+			cursor: pointer;
+			padding: 5px 0px;
+			border: none;
+			background: none;
+			text-align: left;
+			font-family: inherit;
+		}
+
+		a#FileDownload {
+			color: var(--black);
+			text-decoration: none;
+		}
+
+		.contextmenuChild:hover {
+			background: var(--background-secondary);
+		}
+
+		.massage__ico {
+			font-size: 220%;
+			font-weight: bold;
+			font-family: monospace;
+		}
+
+		.check_mark {
+			width: 1rem;
+			height: 0.3rem;
+			transform: rotate(-45deg) translateY(-4px);
+			border-bottom: solid 7px var(--green);
+			border-left: solid 7px var(--green);
+			margin: 5px;
+		}
+
+		.settingChild {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			justify-content: space-between;
+			align-items: center;
+			box-shadow: var(--shadow);
+			border-radius: var(--border-radius);
+			background-color: var(--background-secondary);
+			padding: 5px;
+			box-sizing: border-box;
+			margin: 9px 0px;
+			user-select: none;
+		}
+
+		.settinglable {
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+		}
+
+		div.settinglable>span:nth-child(2) {
+			font-size: 0.8rem;
+			color: gray;
+		}
+
+		#updateinterval {
+			width: 3rem;
+		}
+
+		#massageShowTime {
+			width: 3rem;
+		}
+
+		.uploadfileinfo {
+			width: 90%;
+			background: var(--background-secondary);
+			border-radius: var(--border-radius);
+			padding: 5px 15px;
+			box-sizing: border-box;
+			font-size: 0.95rem;
+			margin: 5px 0px;
+		}
+
+		.filename {
+			width: 100%;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+			-webkit-user-select: none;
+			user-select: none;
+		}
+
+		.filePreview {
+			height: 100%;
+			user-select: text;
+			-webkit-user-select: text;
+			object-fit: contain;
+			width: 100%;
+			margin: 0px;
+		}
+
+		.modal__body.file__body {
+			display: block;
+			overflow-y: auto;
+		}
+
+		img.files\.preview,
+		video.files\.preview {
+			width: 95%;
+			height: 95%;
+			object-fit: contain;
+			border: none;
+			outline: none;
+		}
+
+		.files[data-layout=wide] .fileChild {
+			width: 100%;
+			max-width: unset;
+			height: 60px;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			box-shadow: none;
+			border: none;
+			margin: 2px;
+		}
+
+		.files[data-layout=wide] .fileChild>.fileico {
+			border: none;
+			aspect-ratio: 1/1;
+			background: none;
+			backdrop-filter: none;
+		}
+
+		.files[data-layout=wide] .fileChild>.fileinfo {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			justify-content: space-evenly;
+			width: 100%;
+		}
+
+		.files[data-layout=wide] .fileChild>img.files\.preview {
+			width: 50px;
+		}
+
+		.fileshowchange {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			align-items: center;
+			border-left: 1px gray;
+		}
+
+		.fileviewcontrolbtn {
+			width: 2rem;
+			height: 2rem;
+			background: url(/fileapp/src/ico/usually.png);
+			background-size: contain;
+			margin: 0px 3px;
+		}
+
+		.fileviewcontrolbtn {
+			width: 2rem;
+			height: 2rem;
+			margin: 0px 3px;
+			cursor: pointer;
+			border: none;
+		}
+
+		.fileviewcontrolbtn:first-child {
+			background: url(/fileapp/src/ico/usually.png);
+			background-size: contain;
+		}
+
+		.fileviewcontrolbtn:nth-child(2) {
+			background: url(/fileapp/src/ico/wide.png);
+			background-size: contain;
+		}
+
+		.filedownloada {
+			text-decoration: none;
+			color: var(--black);
+		}
+
+		.filepreview.pdf {
+			height: 100%;
+		}
+
+		.modal__body.file__body.pdf {
+			padding: 0;
+			flex-direction: unset;
+			flex-wrap: unset;
+		}
+
+		input.url:invalid {
+			border-color: var(--red);
+		}
+
+		input.url:valid {
+			border-color: var(--green);
+		}
+
+		input.url {
+			width: 100%;
+			height: 2.2rem;
+			font-size: 1.3rem;
+			border: none;
+			border-bottom: solid 2px;
+			outline: none;
+			padding: 10px;
+			margin: 0px;
+		}
+
+		.QRcode {
+			width: 256px;
+			height: 256px;
+			display: flex;
+			justify-content: center;
+			background: white;
+			padding: 10px;
+			border-radius: var(--border-radius);
+			box-sizing: content-box;
+		}
+
+		.toast {
+			width: 100%;
+			height: 60px;
+			background: var(--background-primary);
+			box-shadow: var(--shadow);
+			border-radius: var(--border-radius);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 0.9rem;
+			-webkit-user-select: none;
+			user-select: none;
+			cursor: pointer;
+			margin: 5px 0px;
+		}
+
+		.toastArea {
+			position: fixed;
+			right: 18px;
+			top: 2rem;
+			width: 25%;
+			background: transparent;
+			z-index: 10;
+			min-width: 200px;
+		}
+
+		.toastArea:active {
+			transform: scale(0.98);
+		}
+
+		div.progressfile {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
+
+		.fileChild.uploadfile {
+			position: relative;
+		}
+
+		.progressfile progress {
+			position: absolute;
+			bottom: -3px;
+			left: 0;
+			height: 13px;
+			width: 100%;
+			accent-color: var(--blue);
+		}
+
+		button:nth-child(1)>svg>path {
+			stroke: var(--white);
+		}
+
+		.fileAddMethod {
+			display: flex;
+			flex-direction: row;
+			background: var(--background-secondary);
+			border: none;
+			margin: 5px;
+			border-radius: var(--border-radius);
+			box-shadow: var(--shadow);
+			cursor: pointer;
+			font-family: inherit;
+			height: 3.6rem;
+			align-items: center;
+		}
+
+		.fileAddMethodTitle {
+			font-size: 1.2rem;
+		}
+
+		.fileAddMethodIcon {
+			width: 2rem;
+			aspect-ratio: 1/1;
+			margin: 3px;
+		}
+
+		.fileAddMethodText {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		button.actionButton {
+			height: 100%;
+			aspect-ratio: 1/1;
+			background: var(--text-color);
+			cursor: pointer;
+			border: none;
+			margin: 0 5px;
+		}
+
+		button.actionButton:focus-visible {
+			transform: scale(1.2);
+		}
+
+		.headerleft {
+			display: flex;
+			flex-wrap: nowrap;
+			flex-direction: row;
+			transform: translateX(-5px);
+		}
+
+		body.using-background-image {
+			--background-secondary-transparent: #ffffff50
+		}
+
+		body.using-background-image header,
+		body.using-background-image .fileico,
+		body.using-background-image .reloadFile,
+		body.using-background-image::-webkit-scrollbar-track {
+			-webkit-backdrop-filter: blur(5px);
+			backdrop-filter: blur(5px);
+			background: var(--background-secondary-transparent);
+		}
+
+		body.using-background-image .filename {
+			text-shadow: 0 0 5px var(--text-opposite-color);
+		}
+
+		body.using-background-image .body::before {
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: -1;
+			width: 100vw;
+			height: 100vh;
+			background-attachment: fixed;
+			background-size: cover;
+			background-position: center;
+			content: "";
+		}
+
+		body.using-background-image .body {
+			background: unset;
+		}
+
+		.imageSelector {
+			width: 100px;
+			aspect-ratio: 1/1;
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+			align-items: center;
+			background-size: cover;
+			justify-content: center;
+			background: var(--background-secondary);
+			margin: 5px;
+			border-radius: var(--border-radius);
+			box-shadow: var(--shadow);
+			cursor: pointer;
+			user-select: none;
+			border: none;
+		}
+
+		.imageSelect {
+			display: flex;
+			justify-content: center;
+			flex-wrap: wrap;
+		}
+
+		.imageSelector>svg {
+			width: 50px;
+		}
+
+		.directoryBackButton {
+			-webkit-mask-image: url(/fileapp/src/ico/arrow_up.svg);
+			mask-image: url(/fileapp/src/ico/arrow_up.svg);
+			-webkit-mask-repeat: no-repeat;
+			mask-repeat: no-repeat;
+			height: 80%;
+			aspect-ratio: 1/1;
+			cursor: pointer;
+			flex-grow: 0;
+		}
+
+		.directoryBars {
+			height: 40px;
+			display: flex;
+			align-items: center;
+			flex-wrap: nowrap;
+			justify-content: center;
+			width: 80%;
+			gap: 10px;
+			margin: 10px 0px;
+		}
+
+		input.directory {
+			font-family: inherit;
+			font-size: 1rem;
+			width: 0%;
+			flex-grow: 2;
+			margin: 0px;
+		}
+
+		.fileChild[draggable=true] {
+			-webkit-user-drag: element;
+			-webkit-user-select: all;
+			user-select: all;
+		}
+
+		.directoryViewer {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		input.search {
+			flex-grow: 1;
+			margin: 0px;
+			width: 0%;
+			transition: width 0.2s;
+		}
+
+		input.search:focus-visible {
+			width: 40%;
+		}
+
+		.QRcodeRapper {
+			display: flex;
+		}
+
+		button.directoryBackButton:focus-visible {
+			transform: scale(1.5);
+		}
+
+		@media (max-width:450px) {
+			.files {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				overflow-y: auto;
+			}
+
+			.upload_icon_svg {
+				display: none;
+			}
+
+			button.upload {
+				width: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 5px;
+			}
+		}
+
+		@media (max-width:600px) {
+			.files {
+				width: 100%;
+				padding: 10px;
+				box-sizing: border-box;
+				height: 100%;
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				overflow-y: auto;
+				justify-content: center;
+			}
+		}
+
+		@media (max-width:700px) {
+			.modal {
+				width: 100%;
+				height: 100%;
+				min-height: unset;
+				max-height: unset;
+				max-width: unset;
+				min-width: unset;
+			}
+		}
+	</style>
+</head>
+
+<body class="light-mode">
+	<div id="templates">
+		<template id="filepreviewtemplate">
+			<div class="file modal">
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 filepreviewclose" fill="none" viewBox="0 0 24 24"
+					stroke="currentColor" stroke-width="2">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+				</svg>
+				<div class="modal__title file__title"></div>
+				<div class="modal__body file__body">
+				</div>
+			</div>
+		</template>
+		<template id="fileicotemplate">
+			<div class="fileico"></div>
+			<div class="fileinfo">
+				<div class="filename"></div>
+				<div class="filemenu"></div>
+			</div>
+		</template>
+		<template id="uploadfileicotemplate">
+			<div class="fileico">
+				<img src="" class="files.preview" alt="" loading="lazy">
+			</div>
+			<div class="fileinfo">
+				<div class="filename"></div>
+				<div class="progressfile">
+					<progress max="1" value="0"></progress>
+				</div>
+				<div class="filemenu"></div>
+			</div>
+		</template>
+		<template id="modalTemplate">
+			<div class="modalbg">
+				<div class="modal">
+					<svg class="h-6 w-6 close" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+					<div class="modal__title"></div>
+					<div class="modal__body"></div>
+				</div>
+			</div>
+		</template>
+		<template id="YoutubeTemplate">
+			<form id="fileform" onsubmit="return false;">
+				<label style="margin-top:20px;display: block;">URL:</label>
+				<input type="url" style="width: 100%;" autocomplete="off" data-name="youtubeId"
+					placeholder="https://youtube.com/watch?v=...">
+				<span style="color: var(--red);">地域限定、非公開、Youtube PremiumコンテンツなどはDL不可</span>
+				<label style="margin-top:20px;display: block;">ファイルの名前(拡張子不要):</label>
+				<input type="text" style="width: 100%;" autocomplete="off" data-name="filename" placeholder="example">
+				<label style="margin-top:20px;display: block;">フォーマット</label>
+				<select class="downloadType">
+					<option value="audioonly">音声のみ(推奨)</option>
+					<option value="both">動画、音声両方(※アホ時間かかる)</option>
+				</select></p>
+				<div style="display:flex;justify-content:center;">
+					<div class="uploadfileinfo">
+						<span>動画情報</span>
+						<div>タイトル:<span data-name="videoTitle">-</span></div>
+						<div>秒数:<span data-name="videoLengthSeconds">-</span></div>
+						<div>チャンネル名:<span data-name="videoOwnerChannelName">-</span></div>
+						<iframe width="256" height="144" src="https://www.youtube.com/embed/"
+							title="YouTube video player" data-name="youtubePreview" frameborder="0"
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+							allowfullscreen></iframe>
+					</div>
+				</div>
+				<div class="uploadBtns">
+					<button class="upload youtubeforumreset" data-name="FormReturn"
+						style="background-color: var(--blue);padding: 5px 30px;width: 50%;display: unset;">戻る</button>
+					<button class="upload youtubeforumadd" data-name="youtubeAddBtn"
+						style="width:50%;padding: 5px 30px;display: unset;">追加</button>
+				</div>
+			</form>
+		</template>
+		<template id="fileUploadTemplate">
+			<form id="fileform" onsubmit="return false;">
+				<label style="display: block;">アップロードするファイル:</label>
+				<div id="drop-zone" title="ファイルをドロップしてファイルを選択してください" data-name="dropZone">
+					<span>ここにファイルをドロップ</span><span>または</span>
+					<input type="file" multiple data-name="fileSelect">
+				</div>
+				<label style="margin-top:20px;display: block;">アップロードするときのファイルの名前:</label>
+				<input type="text" style="width: 100%;" autocomplete="off" data-name="filename"
+					placeholder="example.txt">
+				<div style="display:flex;justify-content:center;">
+					<div class="uploadfileinfo">
+						<span>選択したファイルの情報</span>
+						<div>名前:<span data-name="fileName">-</span></div>
+						<div>サイズ:<span data-name="fileSize">-</span></div>
+						<div>時間(推定):<span data-name="fileTime">-</span></div>
+					</div>
+				</div>
+				<div class="uploadBtns">
+					<button class="upload" data-name="FormReturn"
+						style="background-color: var(--blue);padding: 5px 30px;width: 50%;display: unset;">戻る</button>
+					<button class="upload" data-name="uploadBtn"
+						style="width:50%;padding: 5px 30px;display: unset;">アップロード</button>
+				</div>
+			</form>
+		</template>
+		<template id="fileAddTemplate">
+			<button data-name="folder" class="fileAddMethod">
+				<div class="fileAddMethodIcon">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+						stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round"
+							d="M12 10.5v6m3-3H9m4.06-7.19l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+					</svg>
+				</div>
+				<div class="fileAddMethodText">
+					<div class="fileAddMethodTitle">フォルダを追加</div>
+					<div class="fileAddMethodDescription">フォルダを作成します</div>
+				</div>
+			</button>
+			<button data-name="fromLocal" class="fileAddMethod">
+				<div class="fileAddMethodIcon">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+						stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round"
+							d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+					</svg>
+				</div>
+				<div class="fileAddMethodText">
+					<div class="fileAddMethodTitle">ファイルをアップロード</div>
+					<div class="fileAddMethodDescription">ファイルを送信して追加</div>
+				</div>
+			</button>
+			<button data-name="fromYoutube" class="fileAddMethod">
+				<div class="fileAddMethodIcon">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+						stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round"
+							d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+					</svg>
+				</div>
+				<div class="fileAddMethodText">
+					<div class="fileAddMethodTitle">Youtubeから追加</div>
+					<div class="fileAddMethodDescription">YoutubeのURLから追加</div>
+				</div>
+			</button>
+		</template>
+		<template id="AddbackgroundTemplate">
+			<input type="file" accept=".jpg, .png, .jpeg" style="display: none;" data-name="file">
+			<label style="display: block;">画像を選択:</label>
+			<div data-name="imageSelect" class="imageSelect">
+				<button data-name="imageAdd" data-default class="imageSelector">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 upload_icon_svg" fill="none"
+						viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+						<path stroke-linecap="round" stroke-linejoin="round"
+							d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+					</svg>
+					<span>追加</span>
+				</button>
+				<button data-name="imageClear" data-default class="imageSelector">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+						stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round"
+							d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+					<span>背景をクリア</span>
+				</button>
+			</div>
+		</template>
+		<template id="filesharetemplate">
+			<div class="QRcodeRapper">
+				<div class="QRcode"></div>
+			</div>
+			<label>URL:</label>
+			<input type="url" class="url">
+		</template>
+		<template id="directoryViewTemplate">
+			<div class="directoryBars">
+				<button class="directoryBackButton" aria-label="前に戻る" title="前に戻る"></button>
+				<input class="directory" type="text" readonly aria-label="ディレクトリ">
+				<input class="search" type="text" aria-label="検索" placeholder="検索">
+			</div>
+			<div class="files"></div>
+		</template>
+		<template id="settingSimpleTemplate">
+			<div class="settingChild">
+				<div class="settinglable">
+					<span class="settingName"></span>
+					<span class="settingDescription"></span>
+				</div>
+				<div class="settinginput">
+					<input>
+				</div>
+			</div>
+		</template>
+	</div>
+	<div class="body">
+		<header><span>ファイル置き場</span>
+			<div class="headerleft"></div>
+		</header>
+		<div class="control">
+			<div class="fileControl">
+				<button class="upload" onclick="modals.fileUploadList.Open()"><svg xmlns="http://www.w3.org/2000/svg"
+						class="h-6 w-6 upload_icon_svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+						stroke-width="2">
+						<path stroke-linecap="round" stroke-linejoin="round"
+							d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+					</svg>ファイルを追加</button>
+				<div class="ViewControl">
+					<span id="filelength">-</span><span>件のファイル</span>
+					<button class="reloadFile" onclick="mainDirectoryViewer.UpdateFiles()">
+						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+							xmlns="http://www.w3.org/2000/svg" style="width: 1.7rem;">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+								d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+							</path>
+						</svg>
+					</button>
+					<div class="fileshowchange">
+						<button class="fileviewcontrolbtn" onclick="mainDirectoryViewer.SetLayout('default')"></button>
+						<button class="fileviewcontrolbtn" onclick="mainDirectoryViewer.SetLayout('wide')"></button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="flexCenter">
+			<div class="uploadfiles"></div>
+		</div>
+		<div class="directoryViewer main"></div>
+	</div>
+	<div id="drag-drop-area"></div>
+	</div>
+	<div class="toastArea"></div>
+	<textarea id="textarea" style="position:absolute;left: -9999px;display: none;" readonly></textarea>
+	<a href="#" download="" id="jsdownload" title="download" tabindex="-1"></a>
+	<script>
+		/*
+		function class は先頭大文字
+		変数 は先頭小文字
+		単語の区切りは大文字
+		function の定義は アロー関数
+		*/
+
+		"use strict";
+
+		const validQueryDomains = new Set([
+			'youtube.com',
+			'www.youtube.com',
+			'm.youtube.com',
+			'music.youtube.com',
+			'gaming.youtube.com',
+			'youtu.be',
+		]);
+		const idRegex = /^[a-zA-Z0-9-_]{11}$/;
+		const validPathDomains = /^https?:\/\/(youtu\.be\/|(www\.)?youtube\.com\/(embed|v|shorts)\/)/;
+		const getURLVideoID = link => {
+			const parsed = new URL(link.trim());
+			let id = parsed.searchParams.get('v');
+			if (validPathDomains.test(link.trim()) && !id) {
+				const paths = parsed.pathname.split('/');
+				id = parsed.host === 'youtu.be' ? paths[1] : paths[2];
+			} else if (parsed.hostname && !validQueryDomains.has(parsed.hostname)) {
+				throw Error('Not a YouTube domain');
+			}
+			if (!id) {
+				throw Error(`No video id found: "${link}"`);
+			}
+			id = id.substring(0, 11);
+			if (!idRegex.test(id.trim())) {
+				throw TypeError(`Video id (${id}) does not match expected ` +
+					`format (${idRegex.toString()})`);
+			}
+			return id;
+		};
+
+		const element = {
+			form: document.getElementById('fileform'),
+			dropZone: document.getElementById('drop-zone'),
+			fileInput: document.getElementById('uploadfile'),
+			fileName: document.getElementById('filename'),
+			youtubeurl: document.getElementById('youtubeurl'),
+			youtubename: document.getElementById('youtubename'),
+			fileElement: document.getElementsByClassName("files")[0],
+			FileContextmenu: document.getElementsByClassName('FileContext')[0],
+		};
+
+		const filePath = {
+			GetExtension: path => {
+				if (path.includes('.')) {
+					return path.split('.').at(-1);
+				} else {
+					return path.split('/').at(-1);
+				}
+			},
+			GetPath: path => {
+				const array = path.split('/');
+				array.pop();
+				return array.join('/') + '/';
+			},
+			GetName: path => {
+				return path.split('/').at(-1);
+			},
+			GetNameWithoutExtension: path => {
+				const name = path.split('/').at(-1);
+				const array = name.split('.');
+				array.pop();
+				return array.join('.');
+			}
+		}
+
+		class EventRegister {
+			constructor() { this.events = {} }
+			On(name, fn) {
+				if (this.events[name] === undefined) this.events[name] = new Array()
+				this.events[name].push(fn)
+			}
+			Emit(name, ...arg) {
+				if (this.events[name] === undefined) return
+				this.events[name].forEach(fn => fn(...arg))
+			}
+		}
+
+		class FilePath {
+			constructor(path) { this.path = path }
+			get Extension() {
+				if (this.path.includes('.')) {
+					return this.path.split('.').at(-1);
+				} else {
+					return this.path.split('/').at(-1);
+				}
+			}
+			get Path() {
+				const array = this.path.split('/');
+				array.pop();
+				return array.join('/') + '/';
+			}
+			get Name() {
+				return this.path.split('/').at(-1);
+			}
+			get NameWithoutExtension() {
+				const name = this.path.split('/').at(-1);
+				const array = name.split('.');
+				array.pop();
+				return array.join('.');
+			}
+		}
+
+		class ContextMenu {
+			constructor(option) {
+				this.option = option
+				this.DOM = document.createElement('div')
+			}
+			Show() {
+				this.DOM.classList.add('contextmenu')
+				this.option.menuList.forEach(menu => {
+					switch (menu.type) {
+						case 'line': {
+							const menuElement = document.createElement('hr')
+							this.DOM.appendChild(menuElement)
+							break;
+						}
+						default: {
+							const menuElement = document.createElement('button')
+							menuElement.classList.add('contextmenuChild')
+							menuElement.innerText = menu.text
+							const event = menuElement.addEventListener('click', menu.onClick, { once: true })
+							if ('style' in menu) {
+								for (const [key, value] of Object.entries(menu.style)) menuElement.style[key] = value
+							}
+							this.DOM.appendChild(menuElement)
+							break;
+						}
+					}
+				})
+				document.body.appendChild(this.DOM)
+				this.DOM.firstChild.focus()
+				this.DOM.style.top = MousePosition.y + 'px',
+					this.DOM.style.left = MousePosition.x + 'px',
+					this.DOM.style.display = 'flex'
+				if (window.innerWidth - MousePosition.x < this.DOM.offsetWidth) this.DOM.style.left = MousePosition.x - this.DOM.offsetWidth + 'px';
+				if (window.innerHeight - MousePosition.y < this.DOM.offsetHeight) this.DOM.style.top = MousePosition.y - this.DOM.offsetHeight + 'px';
+				setTimeout(() => {
+					document.addEventListener('click', e => this.Remove(), { once: true })
+					document.addEventListener('contextmenu', e => this.Remove(), { once: true })
+					document.addEventListener('mousewheel', e => this.Remove(), { passive: false, once: true });
+				}, 10);
+				return this
+			}
+			Remove() {
+				this.DOM.remove();
+				return this;
+			}
+		}
+
+		class Modal extends EventRegister {
+			constructor(option) {
+				super()
+				this.clone = document.querySelector('#modalTemplate').content.cloneNode(true);
+				this.title = this.clone.querySelector('.modal__title');
+				this.body = this.clone.querySelector('.modal__body');
+				this.modal = this.clone.querySelector('.modal');
+			}
+			SetTitle(name) {
+				this.title.innerText = name;
+				this.name = name
+				return this
+			}
+			SetContent(selector) {
+				// selector.content からクローンしてbodyに追加
+				const contentTemplate = selector.content.cloneNode(true);
+				this.body.appendChild(contentTemplate)
+				return this
+			}
+			Open(callback = () => { }) {
+				// 閉じるボタン押したら閉じる
+				this.clone.querySelector('.close').addEventListener('click', e => this.Close(), { once: true })
+				// bodyにmodal追加
+				document.body.appendChild(this.clone);
+				this.modal.parentElement.animate(
+					[
+						{ opacity: 0 },
+						{ opacity: 1 }
+					], {
+					duration: 100, //再生時間（ミリ秒）
+					easing: 'linear', //イージング
+				})
+				// Escで消す
+				const escEvent = document.addEventListener('keydown', e => {
+					if (e.key === 'Escape') {
+						this.Close()
+						removeEventListener('keydown', escEvent)
+					}
+				})
+				// callbackを実行
+				callback(this.body);
+				return this
+			}
+			Close() {
+				const anime = this.modal.parentElement.animate(
+					[
+						{ opacity: 1 },
+						{ opacity: 0 }
+					], {
+					duration: 100, //再生時間（ミリ秒）
+					easing: 'linear', //イージング
+				})
+				anime.addEventListener('finish', () => this.modal.parentElement.remove());
+				this.Emit('close')
+				return this;
+			}
+		}
+
+		class ActionButton {
+			constructor() {
+				this.button = document.createElement('button')
+				this.button.classList.add('actionButton')
+			}
+			SetIcon(url) {
+				this.button.style.webkitMaskImage = `url(${url})`
+				this.button.style.maskImage = `url(${url})`
+				return this
+			}
+			SetLabel(name) {
+				this.button.ariaLabel = name
+				this.button.title = name
+				return this
+			}
+			OnClick(handler) {
+				this.ClickCallback = handler
+				return this
+			}
+			OnContextMenu(handler) {
+				this.ContextMenuCallback = handler
+				return this
+			}
+			Show() {
+				document.querySelector('.headerleft').appendChild(this.button)
+				if (this.ClickCallback) {
+					this.button.addEventListener('click', e => this.ClickCallback(e))
+				}
+				if (this.ContextMenuCallback) {
+					this.button.addEventListener('contextmenu', e => this.ContextMenuCallback(e))
+				}
+				return this
+			}
+		}
+
+		class Toast {
+			constructor(string, option) {
+				this.string = string;
+				this.color = option.color ?? 'green';
+				this.time = option.time ?? 5000;
+				this.toast = document.createElement('div');
+				this.removed = false
+			}
+			Show() {
+				this.toast.classList.add('toast');
+				this.toast.innerText = this.string;
+				this.toast.style.borderLeft = `solid 3px var(--${this.color})`;
+				this.toast.addEventListener('click', () => this.Remove());
+				this.toast.animate(
+					[
+						{ opacity: 0, transform: 'translateX(500px)' },
+						{ opacity: 1, transform: 'translateX(0px)' }
+					], {
+					duration: 400, //再生時間（ミリ秒）
+					easing: 'ease-in-out', //イージング
+				})
+				document.querySelector('.toastArea').insertAdjacentElement('afterbegin', this.toast);
+				setTimeout(e => this.Remove(), this.time);
+			}
+			Remove() {
+				if (this.removed) return;
+				const anime = this.toast.animate(
+					[
+						{ opacity: 1, transform: 'translateX(0px)' },
+						{ opacity: 0, transform: 'translateX(500px)' }
+					], {
+					duration: 400, //再生時間（ミリ秒）
+					easing: 'ease-in-out', //イージング
+				})
+				anime.addEventListener('finish', () => {
+					this.toast.remove()
+					this.removed = true
+				});
+			}
+		}
+
+		class BaseFileViewer {
+			SetParentElement(element) {
+				this.parentElement = element
+				return this
+			}
+			SetURL(url) {
+				this.url = url.replaceAll('#', '%23')
+				return this
+			}
+		}
+
+
+		class FileViewer extends BaseFileViewer {
+			constructor() { super(element) }
+			async Show() {
+				const videoExtension = ['mp4', 'mpg', 'avi', 'wmv', 'mkv', 'ts', 'webm', 'mov', 'm2ts'];
+				const audioExtension = ['mp3', 'ogg', 'wav', 'wma', 'm4a'];
+				const imgExtension = ['jpg', 'jpeg', 'png', 'gif', 'tiff', 'tif', 'bmp', 'svg', 'webp'];
+				const codeExtension = ['js', 'html', 'htm', 'xml', 'css', 'php', 'yaml', 'py', 'wasm', 'json', 'c', 'cc', 'cp', 'cpp', 'cxx', 'rb', 'rmd', 'swift', 'h', 'm', 'graphql', 'gql', 'rs', 'go', 'java', 'sql', 'pl'];
+				const pdfExtension = ['pdf'];
+				const markDownExtension = ['md'];
+				const ex = filePath.GetExtension(this.url).toLowerCase()
+				let filePreview
+				if (videoExtension.includes(ex) || audioExtension.includes(ex)) {
+					filePreview = document.createElement('video');
+					filePreview.src = this.url
+					filePreview.controls = true
+					filePreview.volume = 0.5;
+					filePreview.loop = userSettings.videoAutoLoop.value
+					filePreview.load()
+					if (userSettings.videoAutoPlay.value) filePreview.play()
+				} else if (pdfExtension.includes(ex)) {
+					filePreview = document.createElement('iframe');
+					filePreview.src = '/fileapp/src/pdfjs/web/viewer.html?file=' + this.url
+					filePreview.frameBorder = 0
+					filePreview.classList.add('pdf')
+				} else if (markDownExtension.includes(ex)) {
+					filePreview = document.createElement('div');
+					const text = await (await fetch(this.url)).text();
+					filePreview.innerHTML = markdown.parse(text)
+				} else if (imgExtension.includes(ex)) {
+					filePreview = document.createElement('img');
+					filePreview.src = this.url
+					filePreview.classList.add('filePreview')
+				} else if (codeExtension.includes(ex)) {
+					filePreview = document.createElement('pre');
+					const code = document.createElement('code');
+					filePreview.appendChild(code);
+					const text = await (await fetch(this.url)).text();
+					code.textContent = text;
+					hljs.highlightElement(code);
+					hljs.lineNumbersBlock(code, { singleLine: true });
+				} else {
+					filePreview = document.createElement('iframe');
+					filePreview.setAttribute('src', this.url);
+					filePreview.setAttribute('frameborder', '0');
+				}
+				filePreview.classList.add('filePreview');
+				this.parentElement.appendChild(filePreview)
+				return this
+			}
+		}
+
+		class filePreviewer extends BaseFileViewer {
+			constructor() { super(element) }
+			#didShowed = false
+			SetIsFolder(isFolder) {
+				this.isFolder = isFolder
+				return this
+			}
+			async Show() {
+				const videoExtension = ['mp4', 'mpg', 'avi', 'wmv', 'mkv', 'ts', 'webm', 'mov', 'm2ts'];
+				const imgExtension = ['jpg', 'jpeg', 'png', 'gif', 'tiff', 'tif', 'bmp', 'svg', 'webp'];
+				const pdfExtension = ['pdf'];
+				const textExtension = ['md', 'text', 'js', 'html', 'htm', 'xml', 'css', 'php', 'yaml', 'py', 'wasm', 'json', 'c', 'cc', 'cp', 'cpp', 'cxx', 'rb', 'rmd', 'swift', 'h', 'm', 'graphql', 'gql', 'rs', 'go', 'java', 'sql', 'pl', 'bat']
+				const audioExtension = ['mp3', 'ogg', 'wav', 'wma'];
+				const zipExtension = ['zip', 'gz', '7z', 'rar', 'bz2', 'lzh', 'cab', 'sit']
+				const presentationExtension = ['pptx', 'pptm', 'ppt', 'key', 'potx', 'xps']
+				const ex = filePath.GetExtension(this.url).toLowerCase();
+				const name = filePath.GetName(this.url);
+				let filePreview
+				if (this.isFolder) {
+					filePreview = document.createElement('img');
+					filePreview.draggable = false;
+					filePreview.src = '/fileapp/src/ico/folder.svg';
+					filePreview.alt = name;
+					filePreview.style.width = '48px'
+					filePreview.style.height = '48px'
+				} else if (imgExtension.includes(ex)) {
+					filePreview = document.createElement('img');
+					filePreview.loading = 'lazy'
+					filePreview.decoding = 'async'
+					filePreview.src = this.url
+					filePreview.alt = name
+					filePreview.style.imageRendering = 'pixelated'
+				} else if (videoExtension.includes(ex)) {
+					filePreview = document.createElement('video');
+					filePreview.src = this.url
+					filePreview.muted = true;
+					filePreview.loop = true;
+					filePreview.preload = 'none';
+					filePreview.playsInline = true;
+					filePreview.disablePictureInPicture = true;
+					filePreview.addEventListener('mouseover', () => filePreview.play(), false);
+					filePreview.addEventListener('mouseleave', () => filePreview.pause(), false);
+					const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+						if (!entry.isIntersecting) return
+						if (this.#didShowed) return
+						this.#didShowed
+						filePreview.load()
+					}), {
+						root: document.body,
+						rootMargin: '0px',
+						threshold: 0
+					});
+					observer.observe(filePreview);
+				} else if (pdfExtension.includes(ex)) {
+					filePreview = document.createElement('img');
+					filePreview.src = "/fileapp/src/ico/textfile.svg"
+					filePreview.alt = ''
+					filePreview.style.width = '48px'
+					filePreview.style.height = '48px'
+					const Load = () => {
+						if (this.#didShowed === true) return
+						const drawCanvas = document.createElement('canvas');
+						drawCanvas.width = 1280;
+						drawCanvas.height = 720;
+						const pdfjsLib = window['pdfjs-dist/build/pdf'];
+						pdfjsLib.GlobalWorkerOptions.workerSrc = '/fileapp/src/pdfjs/pdf.worker.js';
+						const loadingTask = pdfjsLib.getDocument(this.url);
+						loadingTask.promise.then((pdf) => {
+							pdf.getPage(1).then(page => {
+								const viewport = page.getViewport({ scale: 1 });
+								drawCanvas.width = viewport.width
+								drawCanvas.height = viewport.height
+								drawCanvas.style.width = Math.floor(viewport.width) + "px";
+								drawCanvas.style.height = Math.floor(viewport.height) + "px";
+								const context = drawCanvas.getContext("2d", { willReadFrequently: true });
+								// Render PDF page into canvas context
+								const renderContext = {
+									canvasContext: context,
+									viewport: viewport,
+								};
+								const renderTask = page.render(renderContext);
+								renderTask.promise.then(() => {
+									const imageData = drawCanvas.toDataURL();
+									filePreview.src = imageData
+									filePreview.style.width = 'inherit'
+									filePreview.style.height = 'inherit'
+								});
+								this.#didShowed = true
+							});
+						}, (reason) => {
+							// PDF loading error
+							console.error(reason);
+						}
+						);
+					}
+					const observer = new IntersectionObserver(entries => entries.forEach(entry => entry.isIntersecting ? Load() : ''), {
+						root: document.body,
+						rootMargin: '0px',
+						threshold: 0
+					});
+					observer.observe(filePreview);
+				} else if (textExtension.includes(ex)) {
+					filePreview = document.createElement('img');
+					filePreview.draggable = false;
+					filePreview.src = '/fileapp/src/ico/textfile.svg'
+					filePreview.alt = '';
+					filePreview.style.width = '48px'
+					filePreview.style.height = '48px'
+				} else if (audioExtension.includes(ex)) {
+					filePreview = document.createElement('img');
+					filePreview.draggable = false;
+					filePreview.src = '/fileapp/src/ico/audiofile.svg'
+					filePreview.alt = '';
+					filePreview.style.width = '48px'
+					filePreview.style.height = '48px'
+				} else if (zipExtension.includes(ex)) {
+					filePreview = document.createElement('img');
+					filePreview.src = '/fileapp/src/ico/zipfile.svg'
+					filePreview.draggable = false;
+					filePreview.alt = '';
+					filePreview.style.width = '48px'
+					filePreview.style.height = '48px'
+				} else if (presentationExtension.includes(ex)) {
+					filePreview = document.createElement('img');
+					filePreview.src = '/fileapp/src/ico/presentationfile.svg'
+					filePreview.draggable = false;
+					filePreview.alt = '';
+					filePreview.style.width = '48px'
+					filePreview.style.height = '48px'
+				} else {
+					filePreview = document.createElement('img');
+					filePreview.src = '/fileapp/src/ico/file.svg';
+					filePreview.draggable = false;
+					filePreview.alt = '';
+					filePreview.style.width = '48px'
+					filePreview.style.height = '48px'
+				}
+				filePreview.classList.add('files.preview')
+				this.parentElement.appendChild(filePreview)
+			}
+		}
+
+		class AddedFile {
+			status = {
+				Progress: evt => {
+					const percent = ((evt.loaded / evt.total) * 100).toFixed(1)
+					this.DOM.querySelector('progress').value = percent / 100
+					this.DOM.querySelector('.filename').innerText = `${this.name} - ${percent}%`
+				},
+				Abort: evt => {
+					new Toast('中止しました', { color: 'red', time: 5000 }).Show()
+					this.DOM.querySelector('.filename').innerText = `${this.name} - 中止`
+				},
+				Error: evt => {
+					new Toast('エラーが発生しました', { color: 'red', time: 5000 }).Show()
+					this.DOM.querySelector('.filename').innerText = `${this.name} - エラー`
+				},
+				Timeout: evt => {
+					new Toast('タイムアウトが発生しました', { color: 'red', time: 5000 }).Show()
+					this.DOM.querySelector('.filename').innerText = `${this.name} - タイムアウト`
+				},
+				Load: evt => {
+					this.isUpload = true
+					new Toast(`${this.name}をアップロードしました`, { color: 'green', time: 5000 }).Show()
+					this.DOM.querySelector('.filename').innerText = `${this.name} - 完了`
+					this.DOM.querySelector('progress').style.accentColor = 'var(--green)'
+				}
+			}
+			constructor(fileObject, setting) {
+				this.fileObj = fileObject
+				this.name = setting.name ?? fileObject.name
+				this.type = setting.type ?? fileObject.type
+				this.target = setting.target ?? mainDirectoryViewer.path
+				this.isUpload = false
+				this.openable = setting.openable ?? true
+				this.DOM = null
+				this.XMLHttpRequest = new XMLHttpRequest()
+				this.XMLHttpRequest.upload.addEventListener('progress', e => this.status.Progress(e))
+				this.XMLHttpRequest.upload.addEventListener('abort', e => this.status.Abort())
+				this.XMLHttpRequest.upload.addEventListener('error', e => this.status.Error())
+				this.XMLHttpRequest.upload.addEventListener('timeout', e => this.status.Timeout())
+				this.XMLHttpRequest.upload.addEventListener('load', e => this.status.Load())
+			}
+			static OpenModal(show) {
+				if (show === true) {
+					document.getElementsByClassName('modalbg')[0].style.display = 'flex'
+				} else {
+					document.getElementsByClassName('modalbg')[0].style.display = 'none'
+				}
+			}
+			static modal = {
+				Open: () => {
+					document.getElementsByClassName('modalbg')[0].style.display = 'flex'
+				},
+				Close: () => {
+					document.getElementsByClassName('modalbg')[0].style.display = 'none'
+				},
+				FormReset: check => {
+					if (check === true) {
+						if (confirm('リセットしてもよろしいですか?')) {
+							fileInput.value = ''
+							fileName.value = ''
+						}
+					} else {
+						fileInput.value = ''
+						fileName.value = ''
+					}
+				},
+			}
+			static FileUpload() {
+				if (fileInput.files.length === 0 && fileName.value.length === 0) {
+					alert('ファイルを選択してファイル名を入力してください')
+					return false
+				} else if (fileInput.files.length === 0) {
+					alert('ファイルを選択してください')
+					return false
+				} else if (fileName.value.length === 0) {
+					alert('ファイル名を入力して下さい')
+					return false
+				}
+				modals.fileUpload.Close()
+				Array.from(fileInput.files).forEach(file => {
+					new AddedFile(file, {
+						name: fileInput.files.length === 1 ? fileName.value : undefined
+					})
+						.Show()
+						.Upload()
+				})
+			}
+			Show() {
+				const imgExtension = ['jpg', 'jepg', 'png', 'gif', 'tiff', 'tif', 'bmp'];
+				const template = document.getElementById('uploadfileicotemplate')
+				const clone = template.content.cloneNode(true);
+				const newElement = document.createElement("div");
+				newElement.classList.add("fileChild", "uploadfile");
+				this.DOM = clone.querySelector('.fileinfo')
+				document.querySelector('.uploadfiles').appendChild(newElement);
+				const previewIcon = clone.querySelector('img');
+				previewIcon.classList.remove('files.preview')
+				previewIcon.src = '/fileapp/src/ico/file.png';
+				previewIcon.alt = this.name;
+				clone.querySelector('.filename').innerText = this.name;
+				newElement.appendChild(clone);
+				newElement.addEventListener('click', () => this.Open());
+				newElement.querySelector('.filemenu').addEventListener('click', (e) => {
+					e.stopPropagation();
+					this.Context();
+				})
+				newElement.addEventListener('contextmenu', (e) => {
+					e.preventDefault();
+					this.Context();
+				}, true);
+				return this
+			}
+			Upload() {
+				this.isUpload = false
+				const formData = new FormData();
+				formData.append('filebody', this.fileObj);
+				this.XMLHttpRequest.open('POST', `/fileapp/api/files/${this.target + this.name}?source=upload`, true);
+				this.XMLHttpRequest.send(formData);
+			}
+			Abort() {
+				if (this.isUpload) {
+					alert('すでに送信済みです')
+					return
+				}
+				this.XMLHttpRequest.abort();
+			}
+			NameCopy() {
+				const text = encodeURI(this.name)
+				util.CopyToClipboard(text) ? new Toast(`コピーしました`, { color: 'green', time: 5000 }).Show() : new Toast(`コピーに失敗しました`, { color: 'red', time: 5000 }).Show()
+			}
+			URLCopy() {
+				const text = encodeURI(BASE_URL + this.name)
+				util.CopyToClipboard(text) ? new Toast(`コピーしました`, { color: 'green', time: 5000 }).Show() : new Toast(`コピーに失敗しました`, { color: 'red', time: 5000 }).Show()
+			}
+			async Open() {
+				if (!this.openable) {
+					alert('ファイルを開けません')
+					return false
+				}
+				const template = document.getElementById('filepreviewtemplate');
+				const videoExtension = ['mp4', 'mpg', 'avi', 'wmv', 'mkv', 'ts', 'webm', 'mov', 'm2ts'];
+				const audioExtension = ['mp3', 'ogg', 'wav', 'wma'];
+				const imgExtension = ['jpg', 'jepg', 'png', 'gif', 'tiff', 'tif', 'bmp', 'svg', 'webp'];
+				const codeExtension = ['js', 'html', 'htm', 'xml', 'css', 'php', 'yaml', 'py', 'wasm', 'json', 'c', 'cc', 'cp', 'cpp', 'cxx', 'rb', 'rmd', 'swift', 'h', 'm', 'graphql', 'gql', 'rs', 'go', 'java', 'sql', 'pl'];
+				const markDownExtension = ['md'];
+				const previewBackGround = document.createElement('div');
+				previewBackGround.classList.add('filebg', 'modalbg');
+				document.body.appendChild(previewBackGround);
+				const clone = template.content.cloneNode(true);
+				let filePreview
+				const reader = new FileReader();
+				if (this.type.includes('video/')) {
+					filePreview = document.createElement('video');
+					reader.onload = e => filePreview.src = e.target.result;
+					reader.readAsDataURL(this.fileObj);
+					filePreview.setAttribute('controls', '');
+					filePreview.setAttribute('id', 'filepreview');
+					filePreview.volume = 0.5;
+					filePreview.loop = true;
+				} else if (this.type.includes('audio/')) {
+					filePreview = document.createElement('audio');
+					reader.onload = e => filePreview.src = e.target.result;
+					reader.readAsDataURL(this.fileObj);
+					filePreview.setAttribute('controls', '');
+					filePreview.setAttribute('id', 'filepreview');
+					filePreview.volume = 0.5;
+					filePreview.loop = true;
+				} else if (markDownExtension.includes(filePath.GetExtension(this.name))) {
+					filePreview = document.createElement('div');
+					reader.onload = e => {
+						const text = e.target.result
+						filePreview.style.height = window.innerHeight * 0.6 + 'px'
+						filePreview.innerHTML = markdown.parse(text)
+					};
+					reader.readAsText(this.fileObj);
+				} else if (this.type.includes('image/')) {
+					filePreview = document.createElement('img');
+					reader.onload = e => filePreview.src = e.target.result;
+					reader.readAsDataURL(this.fileObj);
+					filePreview.setAttribute('alt', this.name);
+					filePreview.setAttribute('id', 'filepreview');
+				} else if (codeExtension.includes(filePath.GetExtension(this.name))) {
+					filePreview = document.createElement('pre');
+					reader.onload = e => {
+						const code = document.createElement('code')
+						filePreview.appendChild(code)
+						const text = e.target.result
+						code.textContent = text
+						code.style.height = window.innerHeight * 0.6 + 'px'
+						hljs.highlightElement(code)
+					};
+					reader.readAsText(this.fileObj);
+				} else if (this.type.includes('text/')) {
+					filePreview = document.createElement('div');
+					reader.onload = e => filePreview.textContent = e.target.result;
+					reader.readAsText(this.fileObj);
+				} else {
+					filePreview = document.createElement('div');
+					filePreview.innerText = '表示できないファイルです。'
+				}
+				clone.querySelector('.file__title').textContent = this.name;
+				clone.querySelector('.file__body').appendChild(filePreview);
+				clone.querySelector('.filepreviewclose').addEventListener('click', () => {
+					previewBackGround.remove();
+				}, false);
+				previewBackGround.appendChild(clone);
+			}
+			Context() {
+				new ContextMenu({
+					menuList: [
+						{
+							text: 'ファイル名をコピー',
+							onClick: () => this.NameCopy(),
+						}, {
+							text: 'ファイルのURLをコピー',
+							onClick: () => this.URLCopy()
+						}, {
+							type: 'line'
+						}, {
+							text: 'アップロードの中断',
+							onClick: () => this.Abort()
+						}, {
+							text: '再送信',
+							onClick: () => this.Upload()
+						}
+					]
+				}).Show()
+			}
+		}
+
+		class FileFolderBase {
+			constructor(path, settings) {
+				this.data = settings?.data ?? {}
+				this.path = path
+				this.filePath = new FilePath(path)
+				this.parentElement = settings?.parentElement ?? null
+				this.directoryViewerClass = settings?.directoryViewer ?? null
+			}
+		}
+
+		class UploadedFile extends FileFolderBase {
+			constructor(path, settings) { super(path, settings) }
+			async Open() {
+				this.directoryViewerClass?.Emit('fileOpen', this.path)
+				new Modal()
+					.SetTitle(this.filePath.Name)
+					.Open(element => {
+						new FileViewer()
+							.SetParentElement(element)
+							.SetURL(BASE_PATH + this.path)
+							.Show()
+					})
+					.On('close', () => {
+						this.directoryViewerClass?.Emit('fileClose', this.path)
+					})
+			}
+			async Delete() {
+				const res = await fetch(`/fileapp/api/files/${this.path}`, {
+					method: "DELETE",
+				})
+				res.ok ? new Toast(`${this.filePath.Name}を削除しました。`, { color: 'green', time: 5000 }).Show() : new Toast(`エラーが発生しました`, { color: 'red', time: 5000 }).Show()
+			}
+			NameCopy() {
+				const text = encodeURI(this.filePath.Name)
+				util.CopyToClipboard(text) ? new Toast(`コピーしました`, { color: 'green', time: 5000 }).Show() : new Toast(`コピーに失敗しました`, { color: 'red', time: 5000 }).Show()
+			}
+			URLCopy() {
+				const text = encodeURI(BASE_URL + this.path)
+				util.CopyToClipboard(text) ? new Toast(`コピーしました`, { color: 'green', time: 5000 }).Show() : new Toast(`コピーに失敗しました`, { color: 'red', time: 5000 }).Show()
+			}
+			async Rename() {
+				const name = prompt('名前を入力してください', this.filePath.Name)
+				if (Boolean(name) === false) return false
+				const response = await fetch(`/fileapp/api/files/${this.path}?cmd=rename&target=${name}`, {
+					method: 'PATCH',
+					body: JSON.stringify({
+						cmd: 'rename',
+						target: this.filePath.Path.slice(1) + name
+					})
+				});
+				(response.ok == true) ? new Toast(`${this.filePath.Name}を名前変更しました。`, { color: 'green', time: 5000 }).Show() : new Toast(`エラーが発生しました`, { color: 'red', time: 5000 }).Show()
+			}
+			WindowOpen() {
+				window.open(BASE_PATH + this.path, 'filepreview.' + Math.random(), 'top=100,left=100,width=960,height=540,toolbar=yes,menubar=yes,scrollbars=yes')
+			}
+			Download() {
+				const downloadElement = document.getElementById('jsdownload')
+				downloadElement.href = `/fileapp/api/files/${this.path}`
+				downloadElement.click()
+			}
+			Share() {
+				const ex = this.filePath.Extension.toLowerCase();
+				const name = this.filePath.Name;
+				const URL = encodeURI(BASE_URL + this.path)
+				new Modal()
+					.SetTitle(this.filePath.Name)
+					.SetContent(document.querySelector('#filesharetemplate'))
+					.Open(element => {
+						element.querySelector('.url').value = URL;
+						const QRcode = new QRCode(element.querySelector('.QRcode'), {
+							text: URL,
+							width: 256,
+							height: 256,
+							colorDark: "#000000",
+							colorLight: "#ffffff",
+							correctLevel: QRCode.CorrectLevel.L
+						});
+						element.querySelector('.url').addEventListener('input', () => QRcode.makeCode(this.value), false);
+					})
+			}
+			Context() {
+				new ContextMenu({
+					menuList: [
+						{
+							text: '開く',
+							onClick: () => this.Open(),
+						}, {
+							text: '新規ウィンドウで直接開く',
+							onClick: () => this.WindowOpen()
+						}, {
+							type: 'line'
+						}, {
+							text: 'ファイル名をコピー',
+							onClick: () => this.NameCopy(),
+						}, {
+							text: 'ファイルのURLをコピー',
+							onClick: () => this.URLCopy()
+						}, {
+							type: 'line'
+						}, {
+							text: 'ファイルのURLを共有',
+							onClick: () => this.Share()
+						}, {
+							text: 'ファイルをダウンロード',
+							onClick: () => this.Download()
+						}, {
+							text: '名前変更',
+							onClick: () => this.Rename()
+						}, {
+							text: '削除',
+							onClick: () => this.Delete(),
+							style: {
+								color: 'red'
+							}
+						}, {
+							text: 'プロパティ',
+							onClick: () => { }
+						}
+					]
+				}).Show()
+			}
+			Show() {
+				const clone = document.getElementById('fileicotemplate').content.cloneNode(true);
+				const fileChildElement = document.createElement("div");
+				fileChildElement.classList.add("fileChild");
+				fileChildElement.draggable = true
+				fileChildElement.tabIndex = 0
+				clone.querySelector('.filename').innerText = this.filePath.Name;
+				fileChildElement.dataset.filePath = this.path
+				new filePreviewer()
+					.SetURL(BASE_PATH + this.path)
+					.SetParentElement(clone.querySelector('.fileico'))
+					.Show()
+				fileChildElement.appendChild(clone)
+				fileChildElement.addEventListener('click', () => this.Open())
+				fileChildElement.addEventListener('keydown', e => {
+					if (e.key !== 'Enter') return
+					this.Open()
+					fileChildElement.blur()
+				})
+				fileChildElement.querySelector('.filemenu').addEventListener('click', e => {
+					e.stopPropagation()
+					document.body.click()
+					this.Context()
+				})
+				fileChildElement.addEventListener('contextmenu', e => {
+					e.preventDefault();
+					this.Context();
+				}, true);
+				fileChildElement.addEventListener("dragstart", e => this.directoryViewerClass.draggingElement = e.target);
+				this.parentElement.appendChild(fileChildElement);
+				return this
+			}
+		}
+
+		class Folder extends FileFolderBase {
+			constructor(path, settings) { super(path, settings) }
+			Show() {
+				const clone = document.getElementById('fileicotemplate').content.cloneNode(true);
+				const fileChildElement = document.createElement("div");
+				clone.querySelector('.filename').innerText = this.filePath.Name;
+				fileChildElement.dataset.filePath = this.path
+				fileChildElement.tabIndex = 0
+				new filePreviewer()
+					.SetIsFolder(true)
+					.SetURL(this.path)
+					.SetParentElement(clone.querySelector('.fileico'))
+					.Show()
+				fileChildElement.appendChild(clone)
+				fileChildElement.classList.add("fileChild");
+				fileChildElement.addEventListener('click', () => this.Open())
+				fileChildElement.addEventListener('keydown', e => {
+					if (e.key !== 'Enter') return
+					this.Open()
+					fileChildElement.blur()
+				})
+				fileChildElement.querySelector('.filemenu').addEventListener('click', e => {
+					e.stopPropagation()
+					document.body.click()
+					this.Context()
+				})
+				fileChildElement.addEventListener('contextmenu', e => {
+					e.preventDefault();
+					this.Context();
+				}, true);
+				fileChildElement.addEventListener("dragover", e => e.preventDefault())
+				fileChildElement.addEventListener('drop', async e => {
+					event.preventDefault();
+					const from = this.directoryViewerClass.draggingElement
+					this.directoryViewerClass.draggingElement = null
+					const path = from.dataset.filePath
+					const response = await fetch(`/fileapp/api/files/${path}?cmd=move&target=${this.path}/${filePath.GetName(path)}`, {
+						method: 'PATCH',
+						body: JSON.stringify({
+							cmd: 'rename',
+							target: this.filePath.Path.slice(1) + name
+						})
+					});
+				})
+				this.parentElement.appendChild(fileChildElement);
+				return this
+			}
+			Context() {
+				new ContextMenu({
+					menuList: [
+						{
+							text: '開く',
+							onClick: () => this.Open(),
+						}, {
+							text: '名前変更',
+							onClick: () => this.Rename(),
+						}, {
+							text: '削除',
+							onClick: () => this.Delete(),
+							style: {
+								color: 'red'
+							}
+						}
+					]
+				}).Show()
+			}
+			async Delete() {
+				const res = await fetch(`/fileapp/api/files/${this.path}/`, {
+					method: "DELETE",
+				})
+				res.ok ? new Toast(`${this.filePath.Name}を削除しました。`, { color: 'green', time: 5000 }).Show() : new Toast(`エラーが発生しました`, { color: 'red', time: 5000 }).Show()
+			}
+			Open() {
+				this.directoryViewerClass.ChangeDirectory(this.path + '/')
+			}
+			async Rename() {
+				const name = prompt('名前を入力してください', this.filePath.Name)
+				if (Boolean(name) === false) return false
+				const response = await fetch(`/fileapp/api/files/${this.path}?cmd=rename&target=${name}`, {
+					method: 'PATCH',
+					body: JSON.stringify({
+						cmd: 'rename',
+						target: this.filePath.Path.slice(1) + name
+					})
+				});
+				(response.ok == true) ? new Toast(`${this.filePath.Name}を名前変更しました。`, { color: 'green', time: 5000 }).Show() : new Toast(`エラーが発生しました`, { color: 'red', time: 5000 }).Show()
+			}
+		}
+
+		class DirectoryViewer extends EventRegister {
+			constructor(path, settings) {
+				super()
+				this.parentElement = settings.parentElement ?? null
+				this.filesElement = null
+				this.directoryPathInputElement = null
+				this.searchInputElement = null
+				this.clone = null
+				this.path = path
+				this.draggingElement = null
+				this.filesCache = {}
+				this.layout = settings.layout ?? 'default'
+				this.filter = { search: settings.filter?.search ?? '', types: settings.filter?.type ?? ['directory', 'file'] }
+			}
+			ShowElements() {
+				this.parentElement.classList.add('directoryViewer')
+				this.clone = document.getElementById('directoryViewTemplate').content.cloneNode(true);
+				this.parentElement.appendChild(this.clone)
+				this.searchInputElement = this.parentElement.querySelector('.search')
+				this.filesElement = this.parentElement.querySelector('.files');
+				this.filesElement.dataset.layout = this.layout
+				this.directoryPathInputElement = this.parentElement.querySelector('.directory');
+				this.directoryPathInputElement.value = this.path
+				this.parentElement.querySelector('.directoryBackButton').addEventListener('click', e => {
+					const dirArray = this.path.split('/')
+					const targetPath = dirArray.slice(0, dirArray.length - 2).join('/') + '/'
+					this.ChangeDirectory(targetPath)
+				})
+				this.searchInputElement.addEventListener('change', e => this.SetFilter({ search: e.target.value }))
+				return this
+			}
+			async #ReturnFilesArray() {
+				const filesArray = (await (await fetch(`/fileapp/api/files/${this.path}`, { priority: 'high' })).json())
+				const filteredArray = filesArray.filter(item => item.name.includes(this.filter.search) && this.filter.types.includes(item.type))
+				return Promise.resolve(filteredArray)
+			}
+			async UpdateFiles() {
+				const filesArray = await this.#ReturnFilesArray()
+				if (JSON.stringify(this.filesCache) === JSON.stringify(filesArray)) return false
+				this.filesCache = filesArray
+				this.filesElement.innerHTML = ''
+				const fileLength = filesArray.length
+				if (fileLength === 0) {
+					this.filesElement.innerText = 'このフォルダーは空です'
+				}
+				else {
+					filesArray.forEach(file => {
+						if (file.type === 'directory') new Folder(this.path + file.name, { directoryViewer: this, parentElement: this.filesElement, data: file }).Show()
+						else if (file.type === 'file') new UploadedFile(this.path + file.name, { directoryViewer: this, parentElement: this.filesElement, data: file }).Show()
+					})
+				}
+				this.Emit('updateDirectory', filesArray, fileLength)
+			}
+			ChangeDirectory(path) {
+				this.path = path
+				this.UpdateFiles('/' + path)
+				this.directoryPathInputElement.value = path
+				this.Emit('changeDirectory', path)
+			}
+			async MakeDir(name) {
+				const response = await fetch(`/fileapp/api/files/${this.path + name}/`, {
+					method: 'POST'
+				});
+			}
+			SetLayout(layout) {
+				this.layout = layout
+				this.filesElement.dataset.layout = layout
+				return this
+			}
+			SetFilter(obj) {
+				this.filter.search = obj.search ?? this.filter.search
+				this.filter.types = obj.type ?? this.filter.types
+				this.UpdateFiles()
+			}
+		}
+
+
+		const util = {
+			RandomString: length => {
+				return btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(length)))).substring(0, length)
+			},
+			CopyToClipboard: text => {
+				const textarea = document.getElementById('textarea')
+				textarea.style.display = 'block',
+					textarea.value = text
+				textarea.select();
+				setTimeout(() => textarea.style.display = 'none', 100)
+				const copyResult = document.execCommand("copy");
+				return copyResult
+			},
+			/**
+				 * バイト書式変換
+				 * @param {number} number 適用する数値
+				 * @param {number} [point=0] 小数点の桁数
+				 * @param {number} [com=1024] 1KBあたりのバイト数
+				 * @return {string} 書式化された値を返す
+			 */
+			ByteFormat: (number, point, com) => {
+				if (typeof number === 'undefined') throw '適用する数値が指定されていません。';
+				if (!String(number).match(/^[0-9][0-9\.]+?/)) throw '適用する数値に誤りがあります。';
+				if (!point) point = 0;
+				if (!com) com = 1024;
+				const bytes = Number(number),
+					suffix = ['Byte', 'KB', 'MB', 'GB', 'TB', 'PB', 'ZB', 'YB'],
+					target = Math.floor(Math.log(bytes) / Math.log(com));
+				return (bytes / Math.pow(com, Math.floor(target))).toFixed(point) + ' ' + suffix[target];
+			},
+			SpeedTest: async () => {
+				const Mb = 1000000;
+				const start1 = performance.now();
+				const data = await (await fetch(`/fileapp/src/speedtest?cache=${Math.random()}`)).blob();
+				const bit = data.size * 8
+				const end1 = performance.now();
+				const sec = ((end1 - start1) - await util.PingTest()) / 1000;
+				const bytesPerSec = Math.round(bit / sec)
+				const r1 = (bytesPerSec / Mb).toFixed()
+				return Promise.resolve(r1);
+			},
+			PingTest: async () => {
+				const pingStart = await performance.now();
+				const pingFetch = await fetch(`/fileapp/src/ping?cache=${Math.random()}`);
+				const pingEnd = await performance.now();
+				const ping = pingEnd - pingStart;
+				return Promise.resolve(ping);
+			},
+			Css: e => {
+				const t = document.createElement('style');
+				t.textContent = e;
+				document.head.appendChild(t);
+			},
+			ThemeColor: color => {
+				document.getElementById('themecolor').setAttribute('content', color)
+			},
+			StringLength: string => {
+				const segmenter = new Intl.Segmenter("ja", { granularity: "grapheme" });
+				return [...segmenter.segment(string)].length;
+			},
+			StringToBool: string => {
+				if (string === 'true') return true
+				else if (string === 'false') return false
+				else return null
+			}
+		}
+
+		if (window.navigator.standalone) util.Css(`* {-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-webkit-user-select: none;touch-action:manipulation}input{-webkit-user-select: text;touch-action:unset;}`);
+
+		const modals = {
+			fileUploadList: {
+				Open: () => {
+					const modal = new Modal()
+						.SetTitle('ファイルを追加')
+						.SetContent(document.querySelector('#fileAddTemplate'))
+						.Open(element => {
+							ChangeTitle('ファイルを追加')
+							element.querySelector('button[data-name=fromLocal]').addEventListener('click', () => {
+								modal.Close()
+								modals.fileUpload.Open()
+							})
+							element.querySelector('button[data-name=fromYoutube]').addEventListener('click', () => {
+								modal.Close()
+								modals.fromYoutube.Open()
+							})
+							element.querySelector('button[data-name=folder]').addEventListener('click', async () => {
+								console.log(modal)
+								modal.Close()
+								const name = prompt('フォルダー名を入力してください')
+								if (Boolean(name) === false) {
+									return false
+								}
+								mainDirectoryViewer.MakeDir(name)
+							})
+						})
+					modal.On('close', () => ChangeTitle())
+				}
+			},
+			fileUpload: {
+				Open: () => {
+					const modal = new Modal()
+						.SetTitle('ファイルをアップロード')
+						.SetContent(document.querySelector('#fileUploadTemplate'))
+						.Open(element => {
+							ChangeTitle('ファイルをアップロード')
+							const dropZone = element.querySelector('div[data-name=dropZone]')
+							const fileInput = element.querySelector('input[data-name=fileSelect]')
+							const fileNameInput = element.querySelector('input[data-name=filename]')
+							const fileName = element.querySelector('span[data-name=fileName]')
+							const fileSize = element.querySelector('span[data-name=fileSize]')
+							const fileTime = element.querySelector('span[data-name=fileTime]')
+							const uploadButton = element.querySelector('button[data-name=uploadBtn]')
+							const formReturnButton = element.querySelector('button[data-name=FormReturn]')
+							const FileChange = fileList => {
+								const files = Array.from(fileList)
+								let size = 0
+								files.forEach(file => size += file.size)
+								fileSize.innerText = util.ByteFormat(size)
+								fileName.innerText = files.length === 1 ? files[0].name : `${files[0].name} ほか${files.length - 1}件のファイル`
+								fileNameInput.value = files[0].name
+								if (files.length === 1) {
+									fileNameInput.removeAttribute('disabled')
+								}
+								else {
+									fileNameInput.setAttribute('disabled', true)
+								}
+							}
+							dropZone.addEventListener('dragover', e => {
+								e.stopPropagation();
+								e.preventDefault();
+							}, false);
+
+							dropZone.addEventListener('dragleave', e => {
+								e.stopPropagation();
+								e.preventDefault();
+							}, false);
+
+							dropZone.addEventListener('drop', e => {
+								e.stopPropagation();
+								e.preventDefault();
+								const files = e.dataTransfer.files
+								fileInput.files = files; //inputのvalueをドラッグしたファイルに置き換える。
+								FileChange(files)
+							}, false);
+
+							fileInput.addEventListener('change', e => FileChange(fileInput.files), false);
+
+							formReturnButton.addEventListener('click', e => {
+								modal.Close()
+								modals.fileUploadList.Open()
+							})
+
+							uploadButton.addEventListener('click', e => {
+								if (fileInput.files.length === 0 && fileNameInput.value.length === 0) {
+									alert('ファイルを選択してファイル名を入力してください')
+									return false
+								} else if (fileInput.files.length === 0) {
+									alert('ファイルを選択してください')
+									return false
+								} else if (fileNameInput.value.length === 0) {
+									alert('ファイル名を入力して下さい')
+									return false
+								}
+								modal.Close()
+								Array.from(fileInput.files).forEach(file => {
+									new AddedFile(file, {
+										name: fileInput.files.length === 1 ? fileNameInput.value : undefined
+									})
+										.Show()
+										.Upload()
+								})
+							})
+						})
+					modal.On('close', () => ChangeTitle())
+				}
+			},
+			fromYoutube: {
+				Open: () => {
+					const modal = new Modal()
+						.SetTitle('Youtubeから追加')
+						.SetContent(document.querySelector('#YoutubeTemplate'))
+						.Open(element => {
+							ChangeTitle('Youtubeから追加')
+							element.querySelector('input[data-name=youtubeId]').addEventListener('change', async function () {
+								const url = this.value;
+								const preview = element.querySelector('iframe[data-name=youtubePreview]')
+								const id = getURLVideoID(url)
+								preview.src = `https://www.youtube.com/embed/${id}`
+
+								await fetch(`/fileapp/api/youtube/info/${id}`)
+									.then(res => res.json())
+									.then(result => {
+										const min = Math.floor(result.videoDetails.lengthSeconds / 60);
+										const rem = Math.floor(result.videoDetails.lengthSeconds % 60);
+										element.querySelector('span[data-name=videoTitle]').innerText = result.videoDetails.title
+										element.querySelector('span[data-name=videoLengthSeconds]').innerText = `${min}分${rem}秒`
+										element.querySelector('span[data-name=videoOwnerChannelName]').innerText = result.videoDetails.ownerChannelName
+									})
+							})
+
+							element.querySelector('button[data-name=FormReturn]').addEventListener('click', e => {
+								modal.Close()
+								modals.fileUploadList.Open()
+							})
+
+							element.querySelector('button[data-name=youtubeAddBtn]').addEventListener('click', function () {
+								modal.Close()
+								const url = element.querySelector('input[data-name=youtubeId]').value;
+								const name = element.querySelector('input[data-name=filename]').value
+								const type = element.querySelector('select.downloadType')
+								const id = getURLVideoID(url)
+								if (!id) {
+									alert('無効なURLです')
+									return false
+								}
+								new Toast('処理中です...(動画によっては数分かかります)', { color: 'blue', time: 3000 }).Show()
+								const addedFile = new AddedFile(null, {
+									name,
+									type: '',
+									openable: false
+								}).Show()
+								fetch(`/fileapp/api/files/${mainDirectoryViewer.path + name}?source=youtube&id=${id}&type=${type.value}`, {
+									method: 'POST'
+								}).then(response => {
+									const reader = response.body.getReader();
+									// read() を呼ぶことで chunk を resolve する Promise が返る
+									let nowDoing = 'audio'
+									reader.read().then(async function processResult(result) {
+										const progress = JSON.parse(new TextDecoder().decode(result.value))
+										console.log(progress)
+										if (progress.status === 'video download started') {
+											nowDoing = 'video'
+										} else if (progress.status === 'ended') {
+											new Toast(`${name}を追加しました`, { color: 'green', time: '10000' }).Show()
+											addedFile.DOM.querySelector('.filename').innerText = `${name}-完了`
+
+											if (type !== 'audioonly') return
+											const blob = await (await fetch(`files/${name}`)).blob();
+											const fileObj = new File([blob], name, { type: 'audio/mp3' })
+											addedFile.fileObj = fileObj
+											addedFile.openable = true
+										} else if (progress.status === 'audio video merging') {
+											nowDoing = 'merging'
+											addedFile.DOM.querySelector('.filename').innerText = `${name}-動画合成中`
+										} else if (progress.status === 'progress') {
+											addedFile.DOM.querySelector('.filename').innerText = `${name}-${nowDoing == 'audio' ? '音声' : '動画'}${progress.DownloadedPercent}%`
+											addedFile.DOM.querySelector('progress').value = progress.floatDownloaded
+										}
+										// 再帰する
+										return reader.read().then(processResult);
+									});
+								})
+							})
+						})
+					modal.On('close', () => ChangeTitle())
+				},
+			},
+			backgroundSelect: {
+				Open: () => {
+					const modal = new Modal()
+						.SetTitle('背景を選択')
+						.SetContent(document.querySelector('#AddbackgroundTemplate'))
+						.Open(async element => {
+							const SetImages = async () => {
+								const images = await (await fetch('/fileapp/api/backgrounds/')).json()
+								images.forEach(image => {
+									const imgElement = document.createElement('button')
+									imgElement.setAttribute('data-name', 'images')
+									imgElement.style.backgroundImage = `url("/fileapp/api/backgrounds/${image}")`
+									imgElement.style.backgroundSize = 'cover'
+									imgElement.classList.add('imageSelector')
+									imgElement.addEventListener('click', () => SetBackgroundImage(image))
+									element.querySelector('div[data-name=imageSelect]').appendChild(imgElement)
+								})
+							}
+							const ClearImages = () => {
+								Array.from(element.querySelectorAll('button[data-name=images]')).forEach(e => e.remove())
+							}
+							element.querySelector('button[data-name=imageAdd]').addEventListener('click', () => {
+								element.querySelector('input[data-name=file]').click()
+							})
+							element.querySelector('button[data-name=imageClear]').addEventListener('click', () => SetBackgroundImage())
+
+							element.querySelector('input[data-name=file]').addEventListener('change', () => {
+								const file = element.querySelector('input[data-name=file]').files[0]
+								const formData = new FormData()
+								formData.append('filebody', file)
+								fetch('/fileapp/api/backgrounds/', {
+									method: 'POST',
+									body: formData
+								})
+									.then(res => res.text())
+									.then(data => {
+										if (!data === 'true') new Toast('失敗しました', { timeout: 5000, color: 'red' }).Show()
+										ClearImages()
+										SetImages()
+									})
+									.catch(err => new Toast('失敗しました', { timeout: 5000, color: 'red' }).Show())
+							})
+							SetImages()
+						})
+				}
+			},
+			settings: {
+				Open: () => {
+					const modal = new Modal()
+						.SetTitle('設定')
+						.Open(async element => {
+							for (const [id, value] of Object.entries(userSettings)) {
+								if (value.inputType == 'custom') {
+									continue;
+								}
+								const clone = document.querySelector('#settingSimpleTemplate').content.cloneNode(true);
+								clone.querySelector('.settingName').textContent = value.name
+								clone.querySelector('.settingDescription').textContent = value.description
+								const input = clone.querySelector('input')
+								input.type = value.inputType
+								value.ShowedCallback(input)
+								input.addEventListener('change', e => value.Set(e))
+								element.appendChild(clone)
+							}
+						})
+				}
+			}
+		}
+
+		const BASE_PATH = '/fileapp/api/files/'
+		const BASE_URL = location.origin + '/fileapp/'
+		const PATH_PARAMETER = decodeURIComponent(location.href.replace(BASE_URL, ''))
+		const MILLISECOND = 1000
+		let MousePosition = { x: 0, y: 0 }
+		let isUpload = false
+		let isFocus = true
+		let isSystemThemeChange
+		let fileUpdateIntervalms = localStorage.getItem('Interval') ?? 5000
+		let massageShowTime = localStorage.getItem('ShowTime') ?? 10000
+		const wait = async ms => new Promise(resolve => setTimeout(resolve, ms));
+		document.body.addEventListener("mousemove", e => {
+			MousePosition.x = e.pageX;
+			MousePosition.y = e.pageY;
+		});
+		window.addEventListener('beforeunload', event => {
+			if (!userSettings.closeBeforeWarning.value) return
+			if (event.cancelable === false) return
+			event.preventDefault()
+			event.returnValue = ''
+		})
+		window.matchMedia('(prefers-color-scheme: dark)').onchange = e => {
+			if (!isSystemThemeChange) return false;
+			const isDarkMode = e.matches;
+			isDarkMode ? Theme.Dark() : Theme.Light();
+		}
+		window.addEventListener('focus', () => isFocus = true)
+		window.addEventListener('blur', () => isFocus = false)
+
+		const mainDirectoryViewer = new DirectoryViewer(filePath.GetPath(PATH_PARAMETER), { parentElement: document.querySelector(".directoryViewer.main") })
+		mainDirectoryViewer.ShowElements().UpdateFiles()
+		mainDirectoryViewer.On('updateDirectory', (files, length) => {
+			document.getElementById('filelength').innerText = length
+		})
+		mainDirectoryViewer.On('changeDirectory', path => {
+			const url = new URL(window.location);
+			url.searchParams.set('dir', path);
+			window.history.replaceState(null, '', BASE_URL + path);
+		})
+
+		const userSettings = {
+			updateInterval: {
+				name: 'ファイルの更新間隔',
+				description: '指定した秒数ごとにファイル情報を更新します',
+				value: util.StringToBool(localStorage.getItem('settings.updateInterval')) ?? 10 * MILLISECOND,
+				inputType: 'number',
+				Set(event) {
+					if (event.target.value < 3) {
+						event.target.value = 3
+						return;
+					}
+					localStorage.setItem(`settings.updateInterval`, event.target.value * MILLISECOND)
+					this.value = event.target.value * MILLISECOND
+					clearInterval(fileUpdateInterval)
+					fileUpdateInterval = setInterval(fileUpdateIntervalHandle, event.target.value * MILLISECOND)
+				},
+				ShowedCallback(inputElement) {
+					inputElement.style.width = '80px'
+					inputElement.min = 3
+					inputElement.value = this.value / MILLISECOND
+				}
+			}, deepDarkMode: {
+				name: '深い黒色を利用する',
+				description: 'ダークモード時の黒をもっと暗くします',
+				value: util.StringToBool(localStorage.getItem('settings.deepDarkMode')) ?? false,
+				inputType: 'checkbox',
+				Set(event) {
+					localStorage.setItem(`settings.deepDarkMode`, event.target.checked)
+					event.target.checked ? document.body.classList.add('deep-dark') : document.body.classList.remove('deep-dark')
+					this.value = event.target.checked
+				},
+				ShowedCallback(inputElement) {
+					inputElement.classList.add('toggleButton')
+					inputElement.checked = this.value
+				}
+			}, closeBeforeWarning: {
+				name: '終了時に警告',
+				description: '終了時にダイアログを表示する(可能な場合)',
+				value: util.StringToBool(localStorage.getItem('settings.closeBeforeWarning')) ?? false,
+				inputType: 'checkbox',
+				Set(event) {
+					localStorage.setItem(`settings.closeBeforeWarning`, event.target.checked)
+					this.value = event.target.checked
+				},
+				ShowedCallback(inputElement) {
+					inputElement.classList.add('toggleButton')
+					inputElement.checked = this.value
+				}
+			}, forcedFileUpdate: {
+				name: '常時ファイル情報を更新',
+				description: 'タブにフォーカスされていなくても更新されます',
+				value: util.StringToBool(localStorage.getItem('settings.forcedFileUpdate')) ?? false,
+				inputType: 'checkbox',
+				Set(event) {
+					localStorage.setItem(`settings.forcedFileUpdate`, event.target.checked)
+					this.value = event.target.checked
+				},
+				ShowedCallback(inputElement) {
+					inputElement.classList.add('toggleButton')
+					inputElement.checked = this.value
+				}
+			}, videoAutoLoop: {
+				name: '動画の自動ループ',
+				description: '動画、音声を自動的にループをオンにします',
+				value: util.StringToBool(localStorage.getItem('settings.videoAutoLoop')) ?? true,
+				inputType: 'checkbox',
+				Set(event) {
+					localStorage.setItem(`settings.videoAutoLoop`, event.target.checked)
+					this.value = event.target.checked
+				},
+				ShowedCallback(inputElement) {
+					inputElement.classList.add('toggleButton')
+					inputElement.checked = this.value
+				}
+			}, videoAutoPlay: {
+				name: '動画の自動再生',
+				description: '動画、音声を自動的に再生します(音量注意)',
+				value: util.StringToBool(localStorage.getItem('settings.videoAutoPlay')) ?? false,
+				inputType: 'checkbox',
+				Set(event) {
+					localStorage.setItem(`settings.videoAutoPlay`, event.target.checked)
+					this.value = event.target.checked
+				},
+				ShowedCallback(inputElement) {
+					inputElement.classList.add('toggleButton')
+					inputElement.checked = this.value
+				}
+			}
+		}
+
+		const filetypes = {
+			audio: {
+				fileViewer: 'ファイル表示クラス',
+				filePreviewer: '',
+				iconPath: '',
+			}, video: {
+				fileViewer: '',
+				filePreviewer: '',
+				iconPath: '',
+			}, pdf: {
+				fileViewer: '',
+				filePreviewer: '',
+				iconPath: '',
+			}, img: {
+				fileViewer: '',
+				filePreviewer: '',
+				iconPath: '',
+			}, markdown: {
+				fileViewer: '',
+				filePreviewer: null,
+				iconPath: '',
+			}, code: {
+				fileViewer: '',
+				filePreviewer: null,
+				iconPath: '',
+			}, zip: {
+				fileViewer: null,
+				filePreviewer: null,
+				iconPath: '',
+			}, presentation: {
+				fileViewer: null,
+				filePreviewer: null,
+				iconPath: ''
+			}
+		}
+
+		const extensions = {
+			// 音声ファイル
+			mp3: {
+				description: 'MPEG Audio Layer-3 音声ファイル',
+				openable: true,
+				type: filetypes.audio
+			}, ogg: {
+				description: 'ogg 音声ファイル',
+				openable: true,
+				type: filetypes.audio
+			}, oga: {
+				description: 'oga 音声ファイル',
+				openable: false,
+				type: filetypes.audio
+			}, wav: {
+				description: 'wav 音声ファイル',
+				openable: true,
+				type: filetypes.audio
+			}, wma: {
+				description: 'Windows Media Audio 音声ファイル',
+				openable: false,
+				type: filetypes.audio
+			}, m4a: {
+				description: 'MPEG-4 音声ファイル',
+				openable: true,
+				type: filetypes.audio
+			}, mka: {
+				description: 'Matroska 音声ファイル',
+				openable: true,
+				type: filetypes.audio
+			},
+			// 動画ファイル
+			mp4: {
+				description: 'MPEG-4 動画ファイル',
+				openable: true,
+				type: filetypes.video
+			}, mpg: {
+				description: 'MPEG-1,2 動画ファイル',
+				openable: true,
+				type: filetypes.video
+			}, mpeg: {
+				description: 'MPEG-1,2 動画ファイル',
+				openable: true,
+				type: filetypes.video
+			}, avi: {
+				description: 'Audio Video Interleave 動画ファイル',
+				openable: true,
+				type: filetypes.video
+			}, wmv: {
+				description: 'Windows Media Video 動画ファイル',
+				openable: false,
+				type: filetypes.video
+			}, ogv: {
+				description: 'oga 動画ファイル',
+				openable: true,
+				type: filetypes.video
+			}, ts: {
+				description: 'ts 動画ファイル',
+				openable: true,
+				type: filetypes.video
+			}, webm: {
+				description: 'webm 動画ファイル',
+				openable: true,
+				type: filetypes.video
+			}, mkv: {
+				description: 'Matroska 動画ファイル',
+				openable: true,
+				type: filetypes.video
+			}, mov: {
+				description: 'QuickTime 動画ファイル',
+				openable: true,
+				type: filetypes.video
+			}, m2ts: {
+				description: 'QuickTime 動画ファイル',
+				openable: true,
+				type: filetypes.video
+			}, mts: {
+				description: 'QuickTime 動画ファイル',
+				openable: true,
+				type: filetypes.video
+			}, m2t: {
+				description: 'QuickTime 動画ファイル',
+				openable: true,
+				type: filetypes.video
+			},
+			// 画像ファイル
+			jpg: {
+				description: 'JPEG 非可逆圧縮画像ファイル',
+				openable: true,
+				type: filetypes.img
+			}, jpeg: {
+				description: 'JPEG 非可逆圧縮画像ファイル',
+				openable: true,
+				type: filetypes.img
+			}, jp2: {
+				description: 'JPEG 2000 ファイル',
+				openable: false,
+				type: filetypes.img
+			}, j2k: {
+				description: 'JPEG 2000 ファイル',
+				openable: false,
+				type: filetypes.img
+			}, hdp: {
+				description: 'HD Photo ファイル',
+				openable: false,
+				type: filetypes.img
+			}, wdp: {
+				description: 'Windows Media Photo ファイル',
+				openable: false,
+				type: filetypes.img
+			}, jxr: {
+				description: 'JPEG XR ファイル',
+				openable: false,
+				type: filetypes.img
+			}, png: {
+				description: 'Portable Network Graphics 可逆圧縮画像ファイル',
+				openable: true,
+				type: filetypes.img
+			}, apng: {
+				description: 'Portable Network Graphics アニメーション画像ファイル',
+				openable: true,
+				type: filetypes.img
+			}, gif: {
+				description: 'Graphics Interchange Format アニメーション画像ファイル',
+				openable: true,
+				type: filetypes.img
+			}, tiff: {
+				description: 'Tagged Image File Format 画像ファイル',
+				openable: true,
+				type: filetypes.img
+			}, tif: {
+				description: 'Tagged Image File Format 画像ファイル',
+				openable: true,
+				type: filetypes.img
+			}, gif: {
+				description: 'windowsビットマップ 画像ファイル',
+				openable: true,
+				type: filetypes.img
+			}, gif: {
+				description: 'ベクター形式 画像ファイル',
+				openable: true,
+				type: filetypes.img
+			}, webp: {
+				description: 'WebP 画像ファイル',
+				openable: true,
+				type: filetypes.img
+			}, avif: {
+				description: 'AV1 画像ファイル',
+				openable: true,
+				type: filetypes.img
+			},
+			// PDF
+			pdf: {
+				description: 'PDF ドキュメント',
+				openable: false,
+				type: filetypes.pdf
+			},
+			// 圧縮ファイル
+			zip: {
+				description: 'ZIP 圧縮ファイル',
+				openable: false,
+				type: filetypes.zip
+			}, gz: {
+				description: 'gz 圧縮ファイル',
+				openable: false,
+				type: filetypes.zip
+			}, gzip: {
+				description: 'gz 圧縮ファイル',
+				openable: false,
+				type: filetypes.zip
+			}, rar: {
+				description: 'rar 圧縮ファイル',
+				openable: false,
+				type: filetypes.zip
+			}, bz2: {
+				description: 'bzip2 圧縮ファイル',
+				openable: false,
+				type: filetypes.zip
+			}, bzip2: {
+				description: 'bzip2 圧縮ファイル',
+				openable: false,
+				type: filetypes.zip
+			}, lzh: {
+				description: 'lzh 圧縮ファイル',
+				openable: false,
+				type: filetypes.zip
+			}, cab: {
+				description: 'キャビネット 圧縮ファイル',
+				openable: false,
+				type: filetypes.zip
+			}, sit: {
+				description: 'sit 圧縮ファイル',
+				openable: false,
+				type: filetypes.zip
+			},
+			//プレゼンテーションファイル
+			pptx: {
+				description: 'PowerPoint プレゼンテーションファイル',
+				openable: false,
+				type: filetypes.presentation
+			}, pptm: {
+				description: 'PowerPoint マクロ有効プレゼンテーションファイル',
+				openable: false,
+				type: filetypes.presentation
+			}, ppt: {
+				description: 'PowerPoint 97-2003 プレゼンテーションファイル',
+				openable: false,
+				type: filetypes.presentation
+			}, key: {
+				description: 'Keynote プレゼンテーションファイル',
+				openable: false,
+				type: filetypes.presentation
+			}, potx: {
+				description: 'PowerPoint テンプレートファイル',
+				openable: false,
+				type: filetypes.presentation
+			},
+			// ソースコード
+			md: { description: 'MarkDown ソースファイル', openable: true, type: filetypes.code },
+			txt: { description: 'テキストファイル', openable: true, type: filetypes.code },
+			js: { description: 'JavaScript ソースファイル', openable: true, type: filetypes.code },
+			html: { description: 'HTML ソースファイル', openable: true, type: filetypes.code },
+			shtml: { description: 'SSI HTML ソースファイル', openable: true, type: filetypes.code },
+			htm: { description: 'HTML ソースファイル', openable: true, type: filetypes.code },
+			xml: { description: 'XML ソースファイル', openable: true, type: filetypes.code },
+			css: { description: 'カスケードスタイルシート ソースファイル', openable: true, type: filetypes.code },
+			php: { description: 'PHP ソースファイル', openable: true, type: filetypes.code },
+			yaml: { description: 'YAML ソースファイル', openable: true, type: filetypes.code },
+			py: { description: 'Python ソースファイル', openable: true, type: filetypes.code },
+			wasm: { description: 'WebAssembly ソースファイル', openable: true, type: filetypes.code },
+			json: { description: 'JSON ソースファイル', openable: true, type: filetypes.code },
+			json5: { description: 'JSON(5) ソースファイル', openable: true, type: filetypes.code },
+			c: { description: 'C ソースファイル', openable: true, type: filetypes.code },
+			cc: { description: 'C++ ソースファイル', openable: true, type: filetypes.code },
+			cp: { description: 'Apple Xcode C++ ソースファイル', openable: true, type: filetypes.code },
+			cpp: { description: 'C++ ソースファイル', openable: true, type: filetypes.code },
+			cxx: { description: 'C++ ソースファイル', openable: true, type: filetypes.code },
+			rb: { description: 'Ruby ソースファイル', openable: true, type: filetypes.code },
+			swift: { description: 'Swift ソースファイル', openable: true, type: filetypes.code },
+			h: { description: 'C,C++(ヘッダー) ソースファイル', openable: true, type: filetypes.code },
+			graphql: { description: 'GraphQL ソースファイル', openable: true, type: filetypes.code },
+			gql: { description: 'GraphQL ソースファイル', openable: true, type: filetypes.code },
+			rs: { description: 'Rust ソースファイル', openable: true, type: filetypes.code },
+			go: { description: 'Go ソースファイル', openable: true, type: filetypes.code },
+			java: { description: 'Java ソースファイル', openable: true, type: filetypes.code },
+			sql: { description: 'sql ソースファイル', openable: true, type: filetypes.code },
+			pl: { description: 'Perl ソースファイル', openable: true, type: filetypes.code },
+			bat: { description: 'Windows バッチファイル', openable: true, type: filetypes.code },
+			ps1: { description: 'Windows PowerShell バッチファイル', openable: true, type: filetypes.code },
+			sh: { description: 'Unix シェル', openable: true, type: filetypes.code },
+			toml: { description: 'TOML 設定ファイル', openable: true, type: filetypes.code },
+			cfg: { description: '設定ファイル', openable: true, type: filetypes.code },
+			conf: { description: '設定ファイル', openable: true, type: filetypes.code },
+			conf: { description: '設定ファイル', openable: true, type: filetypes.code },
+		}
+
+		extensions['7z'] = {
+			description: '7-Zip 圧縮ファイル',
+			openable: false,
+			type: filetypes.zip
+		}
+
+		const ChangeTitle = name => {
+			document.title = name ? `${name} | ファイル置き場` : 'ファイル置き場'
+		}
+
+		const fileUpdateIntervalHandle = () => {
+			if ((isFocus || userSettings.forcedFileUpdate.value) === false) return
+			mainDirectoryViewer.UpdateFiles()
+		}
+
+		let fileUpdateInterval = setInterval(fileUpdateIntervalHandle, userSettings.updateInterval.value)
+
+		const actionButtons = [
+			new ActionButton()
+				.SetIcon('/fileapp/src/ico/add.svg')
+				.SetLabel('ファイルを追加')
+				.OnClick(modals.fileUploadList.Open)
+				.OnContextMenu(e => {
+					e.preventDefault()
+					new ContextMenu(
+						{
+							menuList: [
+								{
+									text: "アップロード",
+									onClick: modals.fileUpload.Open
+								},
+								{
+									text: "Youtubeから追加",
+									onClick: modals.fromYoutube.Open
+								}
+							]
+						}
+					).Show()
+				})
+				.Show(),
+			new ActionButton()
+				.SetIcon('/fileapp/src/ico/beta.svg')
+				.SetLabel('ベータ版の起動')
+				.OnClick(() => location.replace(location.href + '?ver=beta'))
+				.Show(),
+			new ActionButton()
+				.SetIcon('/fileapp/src/ico/moon.svg')
+				.SetLabel('テーマの切り替え')
+				.OnClick(() => {
+					new ContextMenu(
+						{
+							menuList: [
+								{
+									text: "ライトモード",
+									onClick: () => {
+										Theme.Light()
+										isSystemThemeChange = false
+									}
+								},
+								{
+									text: "ダークモード",
+									onClick: () => {
+										Theme.Dark()
+										isSystemThemeChange = false
+									}
+								},
+								{
+									text: "システムのテーマ",
+									onClick: Theme.System
+								},
+							]
+						}
+					).Show()
+				})
+				.Show(),
+			new ActionButton()
+				.SetIcon('/fileapp/src/ico/image.svg')
+				.SetLabel('背景の選択')
+				.OnClick(modals.backgroundSelect.Open)
+				.Show(),
+			new ActionButton()
+				.SetIcon('/fileapp/src/ico/setting.svg')
+				.SetLabel('設定')
+				.OnClick(modals.settings.Open)
+				.Show(),
+		]
+
+		const Theme = {
+			Light: () => {
+				document.body.classList.add('light-mode')
+				document.body.classList.remove('dark-mode')
+				util.ThemeColor('#f4f4f4')
+				localStorage.setItem('theme', 'light')
+			},
+			Dark: () => {
+				document.body.classList.add('dark-mode')
+				document.body.classList.remove('light-mode')
+				util.ThemeColor('#242424')
+				localStorage.setItem('theme', 'dark')
+			},
+			System: () => {
+				isSystemThemeChange = true
+				window.matchMedia('(prefers-color-scheme: dark)').matches ? Theme.Dark() : Theme.Light()
+				localStorage.setItem('theme', 'system')
+			}
+		}
+
+		const SetBackgroundImage = url => {
+			if (url) {
+				document.body.classList.add('using-background-image')
+				util.Css(`body.using-background-image .body::before {background-image:url("/fileapp/api/backgrounds/${url}")}`)
+				localStorage.setItem('background-image', url)
+			}
+			else {
+				document.body.classList.remove('using-background-image')
+				localStorage.removeItem('background-image')
+			}
+		}
+
+		switch (localStorage.getItem('theme')) {
+			case 'light':
+				Theme.Light()
+				break;
+			case 'dark':
+				Theme.Dark()
+				break;
+			case 'system':
+				Theme.System()
+				break
+			default:
+				Theme.System()
+				break;
+		}
+
+		if (userSettings.deepDarkMode.value) {
+			document.body.classList.add('deep-dark')
+		}
+
+		SetBackgroundImage(localStorage.getItem('background-image'))
+
+		window.addEventListener('load', () => {
+			const url = new URL(location.href)
+			if (url.searchParams.get('rel') === 'protocolhandler') {
+				location.replace(BASE_URL + new URL(decodeURIComponent(url.searchParams.get('target'))).pathname)
+			}
+			if (filePath.GetName(PATH_PARAMETER)) {
+				new UploadedFile(filePath.GetName(PATH_PARAMETER)).Open()
+			}
+		})
+
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/fileapp/src/sw.js', { scope: '/fileapp/' }).then((registration) => {
+				// 登録成功
+				console.log('ServiceWorker の登録に成功しました。スコープ: ', registration.scope);
+			}).catch(function (err) {
+				// 登録失敗
+				console.log('ServiceWorker の登録に失敗しました。', err);
+			});
+		}
+
+	</Script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js" defer
+		fetchpriority="low"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"
+		defer fetchpriority="low"></script>
+	<script src='https://cdn.jsdelivr.net/gh/rsms/markdown-wasm@v1.1.2/dist/markdown.js' defer
+		fetchpriority="low"></script>
+	<script type="text/javascript" src="/fileapp/src/qrcode.js" defer fetchpriority="low"></script>
+	<script src="/fileapp/src/pdfjs/build/pdf.js" defer fetchpriority="low"></script>
+	<link rel="stylesheet" href="/fileapp/src/highlight/styles/monokai-sublime.min.css" media="print"
+		onload="this.media='all'" fetchpriority="low">
+	<link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" as="style"
+		onload="this.onload=null;this.rel='stylesheet'" fetchpriority="low" />
+</body>
+
+</html>
