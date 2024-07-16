@@ -1,41 +1,43 @@
 const fs = require('fs-extra')
-const ffmpeg = require('fluent-ffmpeg');
-const isVideo = require('is-video');
+const ffmpeg = require('fluent-ffmpeg')
+const isVideo = require('is-video')
 const { exec } = require('child_process')
 const path = require('path')
-const crypto = require("crypto");
+const crypto = require("crypto")
 
-const express = require('express');
-const cors = require('cors');
-const app = express();
-const ews = require('express-ws')(app);
+const dotenv = require('dotenv')
+const express = require('express')
+const cors = require('cors')
+const app = express()
+const ews = require('express-ws')(app)
 const ws = require('ws').Server
 const wss = new ws({ port: 7001 })
 const compression = require('compression')
-const multer = require('multer');
-const ytdl = require('ytdl-core');
+const multer = require('multer')
+const ytdl = require('ytdl-core')
+dotenv.config()
 app.use(compression({
     threshold: 0,
     level: 4,
     memLevel: 9
-}));
-app.use(cors());
+}))
+app.use(cors())
 app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
-app.use(function (req, res, next) {
-    res.removeHeader('X-Powered-By');
-    res.removeHeader('Server');
-    res.setHeader('Service-Worker-Allowed','/fileapp/')
+app.use(express.urlencoded({ extended: true }))
+app.use((req, res, next) => {
+    res.removeHeader('X-Powered-By')
+    res.removeHeader('Server')
+    res.setHeader('Service-Worker-Allowed', '/')
     const date = new Date()
-    const time = Intl.DateTimeFormat("ja-JP", { timeStyle: "medium" }).format(date);
+    const time = Intl.DateTimeFormat("ja-JP", { timeStyle: "medium" }).format(date)
     console.log(`[${time}] ${req.method}:${decodeURIComponent(req.path)}`)
-    next();
-});
+    next()
+})
 const upload = multer({ dest: `${__dirname}/tmp/` }).single('filebody')
-const PORT = 7000;
+const PORT = process.env.PORT
 
-express.static.mime.define({'text/javascript': ['fa-exe']});
-app.use('/src', express.static('src'));
+express.static.mime.define({ 'text/javascript': ['fa-exe'] })
+app.use('/src', express.static('src'))
 
 app.route('/api/files/*')
     .get(async (request, response) => {
@@ -74,12 +76,11 @@ app.route('/api/files/*')
                         await Promise.all(
                             readdir.map(async (file) => {
                                 const stat = await fs.stat(`./file/${targetPath + file}`)
-                                const type = (stat.isDirectory()) ? 'directory' : 'file';
-                                (stat.isDirectory()) ? directories.push({ name: file, type, size: stat.size }) : files.push({ name: file, type, size: stat.size })
+                                stat.isDirectory() ? directories.push({ name: file, type: 'directory', size: stat.size }) : files.push({ name: file, type: 'file', size: stat.size })
                             })
                         )
-                        files.sort((a, b) => a.name.localeCompare(b.name), 'ja');
-                        directories.sort((a, b) => a.name.localeCompare(b.name), 'ja');
+                        files.sort((a, b) => a.name.localeCompare(b.name), 'ja')
+                        directories.sort((a, b) => a.name.localeCompare(b.name), 'ja')
                         response.status(200).json([...directories, ...files])
                     } catch (e) {
                         console.error(e)
@@ -124,7 +125,7 @@ app.route('/api/files/*')
                     .catch(() => {
                         response.status(500).json({ code: "500", message: 'Server Error' })
                     })
-            });
+            })
         } else if (source === 'youtube') {
             const type = request.query.type
             const id = request.query.id
@@ -135,7 +136,7 @@ app.route('/api/files/*')
                 .prependOnceListener('response', () => response.write(JSON.stringify({ status: 'audio download started' })) + '\n')
                 .prependListener('progress', (chunkLength, downloaded, total) => {
                     sendInterval--
-                    const floatDownloaded = downloaded / total;
+                    const floatDownloaded = downloaded / total
                     const DownloadedPercent = (floatDownloaded * 100).toFixed(2)
                     if (sendInterval === 0) {
                         sendInterval = 5
@@ -150,7 +151,7 @@ app.route('/api/files/*')
                         ytdl(`https://www.youtube.com/watch?v=${id}`, { filter: (format) => format.container === 'mp4', quality: 'highestvideo' })
                             .prependListener('progress', (chunkLength, downloaded, total) => {
                                 sendInterval--
-                                const floatDownloaded = downloaded / total;
+                                const floatDownloaded = downloaded / total
                                 const DownloadedPercent = (floatDownloaded * 100).toFixed(2)
                                 if (sendInterval === 0) {
                                     sendInterval = 5
@@ -166,7 +167,7 @@ app.route('/api/files/*')
                                     .on('end', () => {
                                         response.write(JSON.stringify({ status: 'ended' }) + '\n')
                                     })
-                                    .save(`./file/${targetPath}.mp4`);
+                                    .save(`./file/${targetPath}.mp4`)
                             }).pipe(fs.createWriteStream(`./ytdl/${id}-video.mp4`))
                     }
                 }).pipe(fs.createWriteStream(`./ytdl/${id}-audio.mp3`))
@@ -248,7 +249,7 @@ app.route('/api/backgrounds/*')
                 .catch(() => {
                     response.status(500).json({ code: "500", message: 'Server Error' })
                 })
-        });
+        })
     })
 
 app.route('/api/youtube/info/*')
@@ -277,8 +278,8 @@ app.get('/*/', function (request, response) {
     if (request.query.ver === 'beta') {
         return response.sendFile(__dirname + '/beta.html')
     }
-    response.sendFile(__dirname + '/index.html');
-});
+    response.sendFile(__dirname + '/index.html')
+})
 
 app.ws('/api/watch/*/', (ws, req) => {
     let watchingDirectory = req.params[0] || ''
@@ -327,9 +328,9 @@ app.ws('/api/watch/*/', (ws, req) => {
 //})
 
 process.on('uncaughtException', function (err) {
-    console.log('uncaughtException' + err);
-});
+    console.log('uncaughtException' + err)
+})
 
 app.listen(PORT, function () {
-    console.log('server listening. Port:' + PORT);
-});
+    console.log('server listening. Port:' + PORT)
+})

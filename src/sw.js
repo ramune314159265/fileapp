@@ -42,7 +42,7 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
-                return cache.addAll(['/fileapp/', '/fileapp/?ver=beta']);
+                return cache.addAll(['/', '/?ver=beta']);
             })
     );
 
@@ -75,7 +75,7 @@ self.addEventListener('activate', (event) => {
 //        return
 //    }
 //    event.respondWith(
-//        caches.match(isBeta ? '/fileapp/?ver=beta' : '/fileapp/')
+//        caches.match(isBeta ? '/?ver=beta' : '/')
 //            .then(response => response)
 //    )
 //});
@@ -85,7 +85,7 @@ self.addEventListener('fetch', (event) => {
     if(!url.protocol.includes('http')){
         return
     }
-    if (event.request.url.includes('fileapp/api/')) {
+    if (event.request.url.includes('api/')) {
         return
     }
     const isFolderPath = new FilePath(url.pathname).name === ''
@@ -93,10 +93,10 @@ self.addEventListener('fetch', (event) => {
     if (isFolderPath) {
         const isBeta = url.searchParams.get('ver') === 'beta'
         url.searchParams.delete('ver')
-        const targetURL = isBeta ? '/fileapp/?ver=beta' : '/fileapp/'
+        const targetURL = isBeta ? '/?ver=beta' : '/'
         caches.open(CACHE_NAME)
             .then((cache) => {
-                cache.addAll(['/fileapp/', '/fileapp/?ver=beta']);
+                cache.addAll(['/', '/?ver=beta']);
             })
         event.respondWith(
             caches.match(targetURL)

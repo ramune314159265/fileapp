@@ -10,3 +10,4 @@ src/pdfjs/
 #Highlight.js
 src/highlight/
 *.code-workspace
+.env

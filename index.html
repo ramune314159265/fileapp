@@ -11,14 +11,14 @@
 	<meta property="og:title" content="ファイル置き場" />
 	<meta property="og:description" content="ファイルをアップロードするところです" />
 	<meta property="og:site_name" content="ファイル置き場" />
-	<meta property="og:image" content="/file/fileapp/src/ico/ico.png" />
-	<link rel="icon" href="/fileapp/src/ico/ico.png" />
+	<meta property="og:image" content="/file/src/ico/ico.png" />
+	<link rel="icon" href="/src/ico/ico.png" />
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link rel="shortcut icon" href="/fileapp/src/ico/favicon.png">
-	<link rel="manifest" href="/fileapp/src/manifest.json">
+	<link rel="shortcut icon" href="/src/ico/favicon.png">
+	<link rel="manifest" href="/src/manifest.json">
 	<meta id="themecolor" name="theme-color" content="#f4f4f4">
-	<link rel="apple-touch-icon" href="/fileapp/src/ico/ico.png">
+	<link rel="apple-touch-icon" href="/src/ico/ico.png">
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -389,8 +389,8 @@
 			height: 24px;
 			aspect-ratio: 1/1;
 			background: var(--text-color);
-			-webkit-mask-image: url(/fileapp/src/ico/menu.svg);
-			mask-image: url(/fileapp/src/ico/menu.svg);
+			-webkit-mask-image: url(/src/ico/menu.svg);
+			mask-image: url(/src/ico/menu.svg);
 			-webkit-mask-repeat: no-repeat;
 			mask-repeat: no-repeat;
 		}
@@ -604,7 +604,7 @@
 		.fileviewcontrolbtn {
 			width: 2rem;
 			height: 2rem;
-			background: url(/fileapp/src/ico/usually.png);
+			background: url(/src/ico/usually.png);
 			background-size: contain;
 			margin: 0px 3px;
 		}
@@ -618,12 +618,12 @@
 		}
 
 		.fileviewcontrolbtn:first-child {
-			background: url(/fileapp/src/ico/usually.png);
+			background: url(/src/ico/usually.png);
 			background-size: contain;
 		}
 
 		.fileviewcontrolbtn:nth-child(2) {
-			background: url(/fileapp/src/ico/wide.png);
+			background: url(/src/ico/wide.png);
 			background-size: contain;
 		}
 
@@ -838,8 +838,8 @@
 		}
 
 		.directoryBackButton {
-			-webkit-mask-image: url(/fileapp/src/ico/arrow_up.svg);
-			mask-image: url(/fileapp/src/ico/arrow_up.svg);
+			-webkit-mask-image: url(/src/ico/arrow_up.svg);
+			mask-image: url(/src/ico/arrow_up.svg);
 			-webkit-mask-repeat: no-repeat;
 			mask-repeat: no-repeat;
 			height: 80%;
@@ -1503,7 +1503,7 @@
 					if (userSettings.videoAutoPlay.value) filePreview.play()
 				} else if (pdfExtension.includes(ex)) {
 					filePreview = document.createElement('iframe');
-					filePreview.src = '/fileapp/src/pdfjs/web/viewer.html?file=' + this.url
+					filePreview.src = '/src/pdfjs/web/viewer.html?file=' + this.url
 					filePreview.frameBorder = 0
 					filePreview.classList.add('pdf')
 				} else if (markDownExtension.includes(ex)) {
@@ -1554,7 +1554,7 @@
 				if (this.isFolder) {
 					filePreview = document.createElement('img');
 					filePreview.draggable = false;
-					filePreview.src = '/fileapp/src/ico/folder.svg';
+					filePreview.src = '/src/ico/folder.svg';
 					filePreview.alt = name;
 					filePreview.style.width = '48px'
 					filePreview.style.height = '48px'
@@ -1588,7 +1588,7 @@
 					observer.observe(filePreview);
 				} else if (pdfExtension.includes(ex)) {
 					filePreview = document.createElement('img');
-					filePreview.src = "/fileapp/src/ico/textfile.svg"
+					filePreview.src = "/src/ico/textfile.svg"
 					filePreview.alt = ''
 					filePreview.style.width = '48px'
 					filePreview.style.height = '48px'
@@ -1598,7 +1598,7 @@
 						drawCanvas.width = 1280;
 						drawCanvas.height = 720;
 						const pdfjsLib = window['pdfjs-dist/build/pdf'];
-						pdfjsLib.GlobalWorkerOptions.workerSrc = '/fileapp/src/pdfjs/pdf.worker.js';
+						pdfjsLib.GlobalWorkerOptions.workerSrc = '/src/pdfjs/pdf.worker.js';
 						const loadingTask = pdfjsLib.getDocument(this.url);
 						loadingTask.promise.then((pdf) => {
 							pdf.getPage(1).then(page => {
@@ -1637,34 +1637,34 @@
 				} else if (textExtension.includes(ex)) {
 					filePreview = document.createElement('img');
 					filePreview.draggable = false;
-					filePreview.src = '/fileapp/src/ico/textfile.svg'
+					filePreview.src = '/src/ico/textfile.svg'
 					filePreview.alt = '';
 					filePreview.style.width = '48px'
 					filePreview.style.height = '48px'
 				} else if (audioExtension.includes(ex)) {
 					filePreview = document.createElement('img');
 					filePreview.draggable = false;
-					filePreview.src = '/fileapp/src/ico/audiofile.svg'
+					filePreview.src = '/src/ico/audiofile.svg'
 					filePreview.alt = '';
 					filePreview.style.width = '48px'
 					filePreview.style.height = '48px'
 				} else if (zipExtension.includes(ex)) {
 					filePreview = document.createElement('img');
-					filePreview.src = '/fileapp/src/ico/zipfile.svg'
+					filePreview.src = '/src/ico/zipfile.svg'
 					filePreview.draggable = false;
 					filePreview.alt = '';
 					filePreview.style.width = '48px'
 					filePreview.style.height = '48px'
 				} else if (presentationExtension.includes(ex)) {
 					filePreview = document.createElement('img');
-					filePreview.src = '/fileapp/src/ico/presentationfile.svg'
+					filePreview.src = '/src/ico/presentationfile.svg'
 					filePreview.draggable = false;
 					filePreview.alt = '';
 					filePreview.style.width = '48px'
 					filePreview.style.height = '48px'
 				} else {
 					filePreview = document.createElement('img');
-					filePreview.src = '/fileapp/src/ico/file.svg';
+					filePreview.src = '/src/ico/file.svg';
 					filePreview.draggable = false;
 					filePreview.alt = '';
 					filePreview.style.width = '48px'
@@ -1772,7 +1772,7 @@
 				document.querySelector('.uploadfiles').appendChild(newElement);
 				const previewIcon = clone.querySelector('img');
 				previewIcon.classList.remove('files.preview')
-				previewIcon.src = '/fileapp/src/ico/file.png';
+				previewIcon.src = '/src/ico/file.png';
 				previewIcon.alt = this.name;
 				clone.querySelector('.filename').innerText = this.name;
 				newElement.appendChild(clone);
@@ -1791,7 +1791,7 @@
 				this.isUpload = false
 				const formData = new FormData();
 				formData.append('filebody', this.fileObj);
-				this.XMLHttpRequest.open('POST', `/fileapp/api/files/${this.target + this.name}?source=upload`, true);
+				this.XMLHttpRequest.open('POST', `/api/files/${this.target + this.name}?source=upload`, true);
 				this.XMLHttpRequest.send(formData);
 			}
 			Abort() {
@@ -1932,7 +1932,7 @@
 					})
 			}
 			async Delete() {
-				const res = await fetch(`/fileapp/api/files/${this.path}`, {
+				const res = await fetch(`/api/files/${this.path}`, {
 					method: "DELETE",
 				})
 				res.ok ? new Toast(`${this.filePath.Name}を削除しました。`, { color: 'green', time: 5000 }).Show() : new Toast(`エラーが発生しました`, { color: 'red', time: 5000 }).Show()
@@ -1948,7 +1948,7 @@
 			async Rename() {
 				const name = prompt('名前を入力してください', this.filePath.Name)
 				if (Boolean(name) === false) return false
-				const response = await fetch(`/fileapp/api/files/${this.path}?cmd=rename&target=${name}`, {
+				const response = await fetch(`/api/files/${this.path}?cmd=rename&target=${name}`, {
 					method: 'PATCH',
 					body: JSON.stringify({
 						cmd: 'rename',
@@ -1962,7 +1962,7 @@
 			}
 			Download() {
 				const downloadElement = document.getElementById('jsdownload')
-				downloadElement.href = `/fileapp/api/files/${this.path}`
+				downloadElement.href = `/api/files/${this.path}`
 				downloadElement.click()
 			}
 			Share() {
@@ -2096,7 +2096,7 @@
 					const from = this.directoryViewerClass.draggingElement
 					this.directoryViewerClass.draggingElement = null
 					const path = from.dataset.filePath
-					const response = await fetch(`/fileapp/api/files/${path}?cmd=move&target=${this.path}/${filePath.GetName(path)}`, {
+					const response = await fetch(`/api/files/${path}?cmd=move&target=${this.path}/${filePath.GetName(path)}`, {
 						method: 'PATCH',
 						body: JSON.stringify({
 							cmd: 'rename',
@@ -2127,7 +2127,7 @@
 				}).Show()
 			}
 			async Delete() {
-				const res = await fetch(`/fileapp/api/files/${this.path}/`, {
+				const res = await fetch(`/api/files/${this.path}/`, {
 					method: "DELETE",
 				})
 				res.ok ? new Toast(`${this.filePath.Name}を削除しました。`, { color: 'green', time: 5000 }).Show() : new Toast(`エラーが発生しました`, { color: 'red', time: 5000 }).Show()
@@ -2138,7 +2138,7 @@
 			async Rename() {
 				const name = prompt('名前を入力してください', this.filePath.Name)
 				if (Boolean(name) === false) return false
-				const response = await fetch(`/fileapp/api/files/${this.path}?cmd=rename&target=${name}`, {
+				const response = await fetch(`/api/files/${this.path}?cmd=rename&target=${name}`, {
 					method: 'PATCH',
 					body: JSON.stringify({
 						cmd: 'rename',
@@ -2181,7 +2181,7 @@
 				return this
 			}
 			async #ReturnFilesArray() {
-				const filesArray = (await (await fetch(`/fileapp/api/files/${this.path}`, { priority: 'high' })).json())
+				const filesArray = (await (await fetch(`/api/files/${this.path}`, { priority: 'high' })).json())
 				const filteredArray = filesArray.filter(item => item.name.includes(this.filter.search) && this.filter.types.includes(item.type))
 				return Promise.resolve(filteredArray)
 			}
@@ -2209,7 +2209,7 @@
 				this.Emit('changeDirectory', path)
 			}
 			async MakeDir(name) {
-				const response = await fetch(`/fileapp/api/files/${this.path + name}/`, {
+				const response = await fetch(`/api/files/${this.path + name}/`, {
 					method: 'POST'
 				});
 			}
@@ -2259,7 +2259,7 @@
 			SpeedTest: async () => {
 				const Mb = 1000000;
 				const start1 = performance.now();
-				const data = await (await fetch(`/fileapp/src/speedtest?cache=${Math.random()}`)).blob();
+				const data = await (await fetch(`/src/speedtest?cache=${Math.random()}`)).blob();
 				const bit = data.size * 8
 				const end1 = performance.now();
 				const sec = ((end1 - start1) - await util.PingTest()) / 1000;
@@ -2269,7 +2269,7 @@
 			},
 			PingTest: async () => {
 				const pingStart = await performance.now();
-				const pingFetch = await fetch(`/fileapp/src/ping?cache=${Math.random()}`);
+				const pingFetch = await fetch(`/src/ping?cache=${Math.random()}`);
 				const pingEnd = await performance.now();
 				const ping = pingEnd - pingStart;
 				return Promise.resolve(ping);
@@ -2415,7 +2415,7 @@
 								const id = getURLVideoID(url)
 								preview.src = `https://www.youtube.com/embed/${id}`
 
-								await fetch(`/fileapp/api/youtube/info/${id}`)
+								await fetch(`/api/youtube/info/${id}`)
 									.then(res => res.json())
 									.then(result => {
 										const min = Math.floor(result.videoDetails.lengthSeconds / 60);
@@ -2447,7 +2447,7 @@
 									type: '',
 									openable: false
 								}).Show()
-								fetch(`/fileapp/api/files/${mainDirectoryViewer.path + name}?source=youtube&id=${id}&type=${type.value}`, {
+								fetch(`/api/files/${mainDirectoryViewer.path + name}?source=youtube&id=${id}&type=${type.value}`, {
 									method: 'POST'
 								}).then(response => {
 									const reader = response.body.getReader();
@@ -2490,11 +2490,11 @@
 						.SetContent(document.querySelector('#AddbackgroundTemplate'))
 						.Open(async element => {
 							const SetImages = async () => {
-								const images = await (await fetch('/fileapp/api/backgrounds/')).json()
+								const images = await (await fetch('/api/backgrounds/')).json()
 								images.forEach(image => {
 									const imgElement = document.createElement('button')
 									imgElement.setAttribute('data-name', 'images')
-									imgElement.style.backgroundImage = `url("/fileapp/api/backgrounds/${image}")`
+									imgElement.style.backgroundImage = `url("/api/backgrounds/${image}")`
 									imgElement.style.backgroundSize = 'cover'
 									imgElement.classList.add('imageSelector')
 									imgElement.addEventListener('click', () => SetBackgroundImage(image))
@@ -2513,7 +2513,7 @@
 								const file = element.querySelector('input[data-name=file]').files[0]
 								const formData = new FormData()
 								formData.append('filebody', file)
-								fetch('/fileapp/api/backgrounds/', {
+								fetch('/api/backgrounds/', {
 									method: 'POST',
 									body: formData
 								})
@@ -2552,8 +2552,8 @@
 			}
 		}
 
-		const BASE_PATH = '/fileapp/api/files/'
-		const BASE_URL = location.origin + '/fileapp/'
+		const BASE_PATH = '/api/files/'
+		const BASE_URL = location.origin + '/'
 		const PATH_PARAMETER = decodeURIComponent(location.href.replace(BASE_URL, ''))
 		const MILLISECOND = 1000
 		let MousePosition = { x: 0, y: 0 }
@@ -2993,7 +2993,7 @@
 
 		const actionButtons = [
 			new ActionButton()
-				.SetIcon('/fileapp/src/ico/add.svg')
+				.SetIcon('/src/ico/add.svg')
 				.SetLabel('ファイルを追加')
 				.OnClick(modals.fileUploadList.Open)
 				.OnContextMenu(e => {
@@ -3015,12 +3015,12 @@
 				})
 				.Show(),
 			new ActionButton()
-				.SetIcon('/fileapp/src/ico/beta.svg')
+				.SetIcon('/src/ico/beta.svg')
 				.SetLabel('ベータ版の起動')
 				.OnClick(() => location.replace(location.href + '?ver=beta'))
 				.Show(),
 			new ActionButton()
-				.SetIcon('/fileapp/src/ico/moon.svg')
+				.SetIcon('/src/ico/moon.svg')
 				.SetLabel('テーマの切り替え')
 				.OnClick(() => {
 					new ContextMenu(
@@ -3050,12 +3050,12 @@
 				})
 				.Show(),
 			new ActionButton()
-				.SetIcon('/fileapp/src/ico/image.svg')
+				.SetIcon('/src/ico/image.svg')
 				.SetLabel('背景の選択')
 				.OnClick(modals.backgroundSelect.Open)
 				.Show(),
 			new ActionButton()
-				.SetIcon('/fileapp/src/ico/setting.svg')
+				.SetIcon('/src/ico/setting.svg')
 				.SetLabel('設定')
 				.OnClick(modals.settings.Open)
 				.Show(),
@@ -3084,7 +3084,7 @@
 		const SetBackgroundImage = url => {
 			if (url) {
 				document.body.classList.add('using-background-image')
-				util.Css(`body.using-background-image .body::before {background-image:url("/fileapp/api/backgrounds/${url}")}`)
+				util.Css(`body.using-background-image .body::before {background-image:url("/api/backgrounds/${url}")}`)
 				localStorage.setItem('background-image', url)
 			}
 			else {
@@ -3125,7 +3125,7 @@
 		})
 
 		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/fileapp/src/sw.js', { scope: '/fileapp/' }).then((registration) => {
+			navigator.serviceWorker.register('/src/sw.js', { scope: '/' }).then((registration) => {
 				// 登録成功
 				console.log('ServiceWorker の登録に成功しました。スコープ: ', registration.scope);
 			}).catch(function (err) {
@@ -3141,9 +3141,9 @@
 		defer fetchpriority="low"></script>
 	<script src='https://cdn.jsdelivr.net/gh/rsms/markdown-wasm@v1.1.2/dist/markdown.js' defer
 		fetchpriority="low"></script>
-	<script type="text/javascript" src="/fileapp/src/qrcode.js" defer fetchpriority="low"></script>
-	<script src="/fileapp/src/pdfjs/build/pdf.js" defer fetchpriority="low"></script>
-	<link rel="stylesheet" href="/fileapp/src/highlight/styles/monokai-sublime.min.css" media="print"
+	<script type="text/javascript" src="/src/qrcode.js" defer fetchpriority="low"></script>
+	<script src="/src/pdfjs/build/pdf.js" defer fetchpriority="low"></script>
+	<link rel="stylesheet" href="/src/highlight/styles/monokai-sublime.min.css" media="print"
 		onload="this.media='all'" fetchpriority="low">
 	<link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" as="style"
 		onload="this.onload=null;this.rel='stylesheet'" fetchpriority="low" />

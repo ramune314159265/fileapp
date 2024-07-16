@@ -16,7 +16,7 @@ const ErrorHandle = (message) => {
 	};
 	const blob = new Blob([JSON.stringify(body)], headers);
 
-	navigator.sendBeacon('/fileapp/api/error/', blob)
+	navigator.sendBeacon('/api/error/', blob)
 }
 
 window.addEventListener('error', (e) => {
@@ -259,7 +259,7 @@ class Modal extends EventRegister {
 	}
 	Open(callback = () => { }) {
 		(this.option.buttons ?? [{
-			iconPath: '/fileapp/src/ico/x.svg',
+			iconPath: '/src/ico/x.svg',
 			onClick: () => this.Close()
 		}]).forEach(buttonSetting => {
 			const button = document.createElement('button')
@@ -390,7 +390,7 @@ class FileViewer extends BaseFileViewer {
 			if (userSettings.videoAutoPlay.value) filePreview.play()
 		} else if (pdfExtension.includes(ex)) {
 			filePreview = document.createElement('iframe');
-			filePreview.src = '/fileapp/src/pdfjs/web/viewer.html?file=' + this.url
+			filePreview.src = '/src/pdfjs/web/viewer.html?file=' + this.url
 			filePreview.frameBorder = 0
 			filePreview.classList.add('pdf')
 		} else if (markDownExtension.includes(ex)) {
@@ -442,7 +442,7 @@ class filePreviewer extends BaseFileViewer {
 		if (this.isFolder) {
 			filePreview = document.createElement('img');
 			filePreview.draggable = false;
-			filePreview.src = '/fileapp/src/ico/folder.svg';
+			filePreview.src = '/src/ico/folder.svg';
 			filePreview.alt = name;
 			filePreview.style.width = '48px'
 			filePreview.style.height = '48px'
@@ -484,7 +484,7 @@ class filePreviewer extends BaseFileViewer {
 			observer.observe(filePreview);
 		} else if (pdfExtension.includes(ex)) {
 			filePreview = document.createElement('img');
-			filePreview.src = "/fileapp/src/ico/textfile.svg"
+			filePreview.src = "/src/ico/textfile.svg"
 			filePreview.alt = ''
 			filePreview.style.width = '48px'
 			filePreview.style.height = '48px'
@@ -494,7 +494,7 @@ class filePreviewer extends BaseFileViewer {
 				drawCanvas.width = 1280;
 				drawCanvas.height = 720;
 				const pdfjsLib = window['pdfjs-dist/build/pdf'];
-				pdfjsLib.GlobalWorkerOptions.workerSrc = '/fileapp/src/pdfjs/pdf.worker.js';
+				pdfjsLib.GlobalWorkerOptions.workerSrc = '/src/pdfjs/pdf.worker.js';
 				const loadingTask = pdfjsLib.getDocument(this.url);
 				loadingTask.promise.then((pdf) => {
 					pdf.getPage(1).then(page => {
@@ -533,34 +533,34 @@ class filePreviewer extends BaseFileViewer {
 		} else if (textExtension.includes(ex)) {
 			filePreview = document.createElement('img');
 			filePreview.draggable = false;
-			filePreview.src = '/fileapp/src/ico/textfile.svg'
+			filePreview.src = '/src/ico/textfile.svg'
 			filePreview.alt = '';
 			filePreview.style.width = '48px'
 			filePreview.style.height = '48px'
 		} else if (audioExtension.includes(ex)) {
 			filePreview = document.createElement('img');
 			filePreview.draggable = false;
-			filePreview.src = '/fileapp/src/ico/audiofile.svg'
+			filePreview.src = '/src/ico/audiofile.svg'
 			filePreview.alt = '';
 			filePreview.style.width = '48px'
 			filePreview.style.height = '48px'
 		} else if (zipExtension.includes(ex)) {
 			filePreview = document.createElement('img');
-			filePreview.src = '/fileapp/src/ico/zipfile.svg'
+			filePreview.src = '/src/ico/zipfile.svg'
 			filePreview.draggable = false;
 			filePreview.alt = '';
 			filePreview.style.width = '48px'
 			filePreview.style.height = '48px'
 		} else if (presentationExtension.includes(ex)) {
 			filePreview = document.createElement('img');
-			filePreview.src = '/fileapp/src/ico/presentationfile.svg'
+			filePreview.src = '/src/ico/presentationfile.svg'
 			filePreview.draggable = false;
 			filePreview.alt = '';
 			filePreview.style.width = '48px'
 			filePreview.style.height = '48px'
 		} else {
 			filePreview = document.createElement('img');
-			filePreview.src = '/fileapp/src/ico/file.svg';
+			filePreview.src = '/src/ico/file.svg';
 			filePreview.draggable = false;
 			filePreview.alt = '';
 			filePreview.style.width = '48px'
@@ -676,7 +676,7 @@ class AddedFile {
 		} else {
 			const previewIcon = clone.querySelector('img');
 			previewIcon.classList.remove('files.preview')
-			previewIcon.src = '/fileapp/src/ico/file.png';
+			previewIcon.src = '/src/ico/file.png';
 			previewIcon.alt = this.name;
 			clone.querySelector('.filename').innerText = this.name;
 		}
@@ -696,7 +696,7 @@ class AddedFile {
 		this.isUpload = false
 		const formData = new FormData();
 		formData.append('filebody', this.fileObj);
-		this.XMLHttpRequest.open('POST', `/fileapp/api/files/${this.target + this.name}?source=upload`, true);
+		this.XMLHttpRequest.open('POST', `/api/files/${this.target + this.name}?source=upload`, true);
 		this.XMLHttpRequest.send(formData);
 	}
 	Abort() {
@@ -819,19 +819,19 @@ class FileFolderManager {
 	}
 	async IsExits() {
 		try {
-			return await (await fetch(`/fileapp/api/files/${this.path}`, { method: 'HEAD' })).ok
+			return await (await fetch(`/api/files/${this.path}`, { method: 'HEAD' })).ok
 		} catch (e) {
 			return false
 		}
 	}
 	async Delete() {
-		return await (await fetch(`/fileapp/api/files/${this.path}`, { method: 'DELETE' })).ok
+		return await (await fetch(`/api/files/${this.path}`, { method: 'DELETE' })).ok
 	}
 	async Stat() {
-		return await (await fetch(`/fileapp/api/files/${this.path}?info`, { method: 'GET' })).text()
+		return await (await fetch(`/api/files/${this.path}?info`, { method: 'GET' })).text()
 	}
 	async Rename(name) {
-		return await (await fetch(`/fileapp/api/files/${this.path}?cmd=rename&target=${name}`, { method: 'PATCH' })).ok
+		return await (await fetch(`/api/files/${this.path}?cmd=rename&target=${name}`, { method: 'PATCH' })).ok
 	}
 }
 
@@ -854,7 +854,7 @@ class FolderManager extends FileFolderManager {
 	async createFolder({
 		name
 	}) {
-		await fetch(`/fileapp/api/files/${this.path + name}/`, { method: 'POST' });
+		await fetch(`/api/files/${this.path + name}/`, { method: 'POST' });
 	}
 }
 
@@ -898,13 +898,13 @@ class FileUIBase {
 	async Open() {
 		const modal = new Modal({
 			buttons: [{
-				iconPath: '/fileapp/src/ico/arrow-up-on-square.svg',
+				iconPath: '/src/ico/arrow-up-on-square.svg',
 				onClick: () => this.Share()
 			}, {
-				iconPath: '/fileapp/src/ico/arrows-pointing-out.svg',
+				iconPath: '/src/ico/arrows-pointing-out.svg',
 				onClick: modal => modal.ToggleFullscreen()
 			}, {
-				iconPath: '/fileapp/src/ico/x.svg',
+				iconPath: '/src/ico/x.svg',
 				onClick: modal => modal.Close()
 			},]
 		})
@@ -934,7 +934,7 @@ class FileUIBase {
 	}
 	Download() {
 		const downloadElement = document.getElementById('jsdownload')
-		downloadElement.href = `/fileapp/api/files/${this.path}`
+		downloadElement.href = `/api/files/${this.path}`
 		downloadElement.click()
 	}
 	Share() {
@@ -966,12 +966,12 @@ class FileUIBase {
 				}, {
 					text: '新規ウィンドウで直接開く',
 					onClick: () => this.WindowOpen(),
-					icon: '/fileapp/src/ico/arrow-top-right-on-square.svg'
+					icon: '/src/ico/arrow-top-right-on-square.svg'
 				}, {
 					type: 'line'
 				}, {
 					text: 'クリップボードにコピー',
-					icon: '/fileapp/src/ico/chevron-right.svg',
+					icon: '/src/ico/chevron-right.svg',
 					submenu: [
 						{
 							text: 'ファイル名をコピー',
@@ -990,22 +990,22 @@ class FileUIBase {
 					onClick: () => {
 						this.manager.favorite.isListed ? this.manager.favorite.Remove() : this.manager.favorite.Add()
 					},
-					icon: '/fileapp/src/ico/star.svg'
+					icon: '/src/ico/star.svg'
 				}, {
 					text: 'ファイルのURLを共有',
 					onClick: () => this.Share(),
-					icon: '/fileapp/src/ico/share.svg'
+					icon: '/src/ico/share.svg'
 				}, {
 					text: 'ファイルをダウンロード',
 					onClick: () => this.Download(),
-					icon: '/fileapp/src/ico/arrow-down-tray.svg'
+					icon: '/src/ico/arrow-down-tray.svg'
 				}, {
 					text: '名前変更',
 					onClick: () => this.Rename()
 				}, {
 					text: '削除',
 					onClick: () => this.Delete(),
-					icon: '/fileapp/src/ico/trash.svg',
+					icon: '/src/ico/trash.svg',
 					style: {
 						color: 'red'
 					}
@@ -1116,7 +1116,7 @@ class UploadedFile extends AddedFileBase {
 	Upload() {
 		const formData = new FormData();
 		formData.append('filebody', this.fileObj);
-		this.xhr.open('POST', `/fileapp/api/files/${this.targetPath}?source=upload`, true);
+		this.xhr.open('POST', `/api/files/${this.targetPath}?source=upload`, true);
 		this.xhr.send(formData);
 	}
 	Open() {
@@ -1135,7 +1135,7 @@ class UploadedFile extends AddedFileBase {
 				menuList: [
 					{
 						text: 'クリップボードにコピー',
-						icon: '/fileapp/src/ico/chevron-right.svg',
+						icon: '/src/ico/chevron-right.svg',
 						submenu: [
 							{
 								text: 'ファイル名をコピー',
@@ -1148,7 +1148,7 @@ class UploadedFile extends AddedFileBase {
 					}, {
 						text: 'ファイルのURLを共有',
 						onClick: () => new FileUIBase(this.targetPath).Share(),
-						icon: '/fileapp/src/ico/share.svg'
+						icon: '/src/ico/share.svg'
 					}, {
 						type: 'line'
 					}, {
@@ -1173,13 +1173,13 @@ class UploadedFileOld extends FileFolderBase {
 		this.directoryViewerClass?.Emit('fileOpen', this.path)
 		const modal = new Modal({
 			buttons: [{
-				iconPath: '/fileapp/src/ico/arrow-up-on-square.svg',
+				iconPath: '/src/ico/arrow-up-on-square.svg',
 				onClick: () => this.Share()
 			}, {
-				iconPath: '/fileapp/src/ico/arrows-pointing-out.svg',
+				iconPath: '/src/ico/arrows-pointing-out.svg',
 				onClick: modal => modal.ToggleFullscreen()
 			}, {
-				iconPath: '/fileapp/src/ico/x.svg',
+				iconPath: '/src/ico/x.svg',
 				onClick: modal => modal.Close()
 			},]
 		})
@@ -1198,7 +1198,7 @@ class UploadedFileOld extends FileFolderBase {
 		if (!confirm('フォルダーを削除しますか?')) {
 			return
 		}
-		const res = await fetch(`/fileapp/api/files/${this.path}`, {
+		const res = await fetch(`/api/files/${this.path}`, {
 			method: "DELETE",
 		})
 		res.ok ? new Toast(`${this.filePath.name}を削除しました。`, { color: 'green', time: 5000 }).Show() : new Toast(`エラーが発生しました`, { color: 'red', time: 5000 }).Show()
@@ -1214,7 +1214,7 @@ class UploadedFileOld extends FileFolderBase {
 	async Rename() {
 		const name = prompt('名前を入力してください', this.filePath.name)
 		if (Boolean(name) === false) return false
-		const response = await fetch(`/fileapp/api/files/${this.path}?cmd=rename&target=${name}`, {
+		const response = await fetch(`/api/files/${this.path}?cmd=rename&target=${name}`, {
 			method: 'PATCH',
 			body: JSON.stringify({
 				cmd: 'rename',
@@ -1228,7 +1228,7 @@ class UploadedFileOld extends FileFolderBase {
 	}
 	Download() {
 		const downloadElement = document.getElementById('jsdownload')
-		downloadElement.href = `/fileapp/api/files/${this.path}`
+		downloadElement.href = `/api/files/${this.path}`
 		downloadElement.click()
 	}
 	Share() {
@@ -1260,12 +1260,12 @@ class UploadedFileOld extends FileFolderBase {
 				}, {
 					text: '新規ウィンドウで直接開く',
 					onClick: () => this.WindowOpen(),
-					icon: '/fileapp/src/ico/arrow-top-right-on-square.svg'
+					icon: '/src/ico/arrow-top-right-on-square.svg'
 				}, {
 					type: 'line'
 				}, {
 					text: 'クリップボードにコピー',
-					icon: '/fileapp/src/ico/chevron-right.svg',
+					icon: '/src/ico/chevron-right.svg',
 					submenu: [
 						{
 							text: 'ファイル名をコピー',
@@ -1284,22 +1284,22 @@ class UploadedFileOld extends FileFolderBase {
 					onClick: () => {
 						new FavoriteManager(this.path).Add()
 					},
-					icon: '/fileapp/src/ico/star.svg'
+					icon: '/src/ico/star.svg'
 				}, {
 					text: 'ファイルのURLを共有',
 					onClick: () => this.Share(),
-					icon: '/fileapp/src/ico/share.svg'
+					icon: '/src/ico/share.svg'
 				}, {
 					text: 'ファイルをダウンロード',
 					onClick: () => this.Download(),
-					icon: '/fileapp/src/ico/arrow-down-tray.svg'
+					icon: '/src/ico/arrow-down-tray.svg'
 				}, {
 					text: '名前変更',
 					onClick: () => this.Rename()
 				}, {
 					text: '削除',
 					onClick: () => this.Delete(),
-					icon: '/fileapp/src/ico/trash.svg',
+					icon: '/src/ico/trash.svg',
 					style: {
 						color: 'red'
 					}
@@ -1341,7 +1341,7 @@ class UploadedFileOld extends FileFolderBase {
 		fileChildElement.addEventListener("dragstart", e => {
 			this.directoryViewerClass.draggingElement = e.target
 			const dragImage = new Image()
-			dragImage.src = '/fileapp/src/ico/dragfileico.png'
+			dragImage.src = '/src/ico/dragfileico.png'
 			e.dataTransfer.setDragImage(dragImage, 0, 0)
 		});
 		this.parentElement.appendChild(fileChildElement);
@@ -1385,7 +1385,7 @@ class Folder extends FileFolderBase {
 			const from = this.directoryViewerClass.draggingElement
 			this.directoryViewerClass.draggingElement = null
 			const path = from.dataset.filePath
-			const response = await fetch(`/fileapp/api/files/${path}?cmd=move&target=${this.path}/${filePath.GetName(path)}`, {
+			const response = await fetch(`/api/files/${path}?cmd=move&target=${this.path}/${filePath.GetName(path)}`, {
 				method: 'PATCH',
 				body: JSON.stringify({
 					cmd: 'rename',
@@ -1404,7 +1404,7 @@ class Folder extends FileFolderBase {
 					onClick: () => this.Open(),
 				}, {
 					text: 'クリップボードにコピー',
-					icon: '/fileapp/src/ico/chevron-right.svg',
+					icon: '/src/ico/chevron-right.svg',
 					submenu: [
 						{
 							text: 'フォルダー名をコピー',
@@ -1420,7 +1420,7 @@ class Folder extends FileFolderBase {
 				}, {
 					text: '削除',
 					onClick: () => this.Delete(),
-					icon: '/fileapp/src/ico/trash.svg',
+					icon: '/src/ico/trash.svg',
 					style: {
 						color: 'red'
 					}
@@ -1440,7 +1440,7 @@ class Folder extends FileFolderBase {
 		if (!confirm('フォルダーを削除しますか?')) {
 			return
 		}
-		const res = await fetch(`/fileapp/api/files/${this.path}/`, {
+		const res = await fetch(`/api/files/${this.path}/`, {
 			method: "DELETE",
 		})
 		res.ok ? new Toast(`${this.filePath.name}を削除しました。`, { color: 'green', time: 5000 }).Show() : new Toast(`エラーが発生しました`, { color: 'red', time: 5000 }).Show()
@@ -1451,7 +1451,7 @@ class Folder extends FileFolderBase {
 	async Rename() {
 		const name = prompt('名前を入力してください', this.filePath.name)
 		if (Boolean(name) === false) return false
-		const response = await fetch(`/fileapp/api/files/${this.path}?cmd=rename&target=${name}`, {
+		const response = await fetch(`/api/files/${this.path}?cmd=rename&target=${name}`, {
 			method: 'PATCH',
 			body: JSON.stringify({
 				cmd: 'rename',
@@ -1494,7 +1494,7 @@ class DirectoryViewer extends EventRegister {
 		return this
 	}
 	async #ReturnFilesArray() {
-		const filesArray = (await (await fetch(`/fileapp/api/files/${this.path}`, { priority: 'high' })).json())
+		const filesArray = (await (await fetch(`/api/files/${this.path}`, { priority: 'high' })).json())
 		const filteredArray = filesArray.filter(item => item.name.includes(this.filter.search) && this.filter.types.includes(item.type))
 		return Promise.resolve(filteredArray)
 	}
@@ -1522,7 +1522,7 @@ class DirectoryViewer extends EventRegister {
 		this.Emit('changeDirectory', path)
 	}
 	async MakeDir(name) {
-		const response = await fetch(`/fileapp/api/files/${this.path + name}/`, {
+		const response = await fetch(`/api/files/${this.path + name}/`, {
 			method: 'POST'
 		});
 	}
@@ -1572,7 +1572,7 @@ const util = {
 	SpeedTest: async () => {
 		const Mb = 1000000;
 		const start1 = performance.now();
-		const data = await (await fetch(`/fileapp/src/speedtest?cache=${Math.random()}`)).blob();
+		const data = await (await fetch(`/src/speedtest?cache=${Math.random()}`)).blob();
 		const bit = data.size * 8
 		const end1 = performance.now();
 		const sec = ((end1 - start1) - await util.PingTest()) / 1000;
@@ -1582,7 +1582,7 @@ const util = {
 	},
 	PingTest: async () => {
 		const pingStart = await performance.now();
-		const pingFetch = await fetch(`/fileapp/src/ping?cache=${Math.random()}`);
+		const pingFetch = await fetch(`/src/ping?cache=${Math.random()}`);
 		const pingEnd = await performance.now();
 		const ping = pingEnd - pingStart;
 		return Promise.resolve(ping);
@@ -1764,7 +1764,7 @@ const modals = {
 						const id = getURLVideoID(url)
 						preview.src = `https://www.youtube.com/embed/${id}`
 
-						const videoInfo = await (await fetch(`/fileapp/api/youtube/info/${id}`)).json()
+						const videoInfo = await (await fetch(`/api/youtube/info/${id}`)).json()
 
 						const min = Math.floor(videoInfo.videoDetails.lengthSeconds / 60);
 						const rem = Math.floor(videoInfo.videoDetails.lengthSeconds % 60);
@@ -1798,7 +1798,7 @@ const modals = {
 							type: '',
 							openable: false
 						}).Show()
-						fetch(`/fileapp/api/files/${mainDirectoryViewer.path + name}?source=youtube&id=${id}&type=${type.value}`, {
+						fetch(`/api/files/${mainDirectoryViewer.path + name}?source=youtube&id=${id}&type=${type.value}`, {
 							method: 'POST'
 						}).then(response => {
 							const reader = response.body.getReader();
@@ -1845,11 +1845,11 @@ const modals = {
 				.SetContent(document.querySelector('#AddbackgroundTemplate'))
 				.Open(async element => {
 					const SetImages = async () => {
-						const images = await (await fetch('/fileapp/api/backgrounds/')).json()
+						const images = await (await fetch('/api/backgrounds/')).json()
 						images.forEach(image => {
 							const imgElement = document.createElement('button')
 							imgElement.setAttribute('data-name', 'images')
-							imgElement.style.backgroundImage = `url("/fileapp/api/backgrounds/${image}")`
+							imgElement.style.backgroundImage = `url("/api/backgrounds/${image}")`
 							imgElement.style.backgroundSize = 'cover'
 							imgElement.classList.add('imageSelector')
 							imgElement.addEventListener('click', () => SetBackgroundImage(image))
@@ -1868,7 +1868,7 @@ const modals = {
 						const file = element.querySelector('input[data-name=file]').files[0]
 						const formData = new FormData()
 						formData.append('filebody', file)
-						fetch('/fileapp/api/backgrounds/', {
+						fetch('/api/backgrounds/', {
 							method: 'POST',
 							body: formData
 						})
@@ -1907,9 +1907,9 @@ const modals = {
 	}
 }
 
-const BASE_PATH = '/fileapp/'
-const FILES_ROOT = '/fileapp/api/files/'
-const BASE_URL = location.origin + '/fileapp/'
+const BASE_PATH = '/'
+const FILES_ROOT = '/api/files/'
+const BASE_URL = location.origin + '/'
 const PATH_PARAMETER = decodeURIComponent(location.pathname.replace(BASE_PATH, ''))
 const IS_BETA = new URL(location.href).searchParams.get('ver') === 'beta'
 const MILLISECOND = 1000
@@ -2040,45 +2040,45 @@ const userSettings = {
 
 const filetypes = {
 	folder: {
-		iconPath: '/fileapp/src/ico/folder.svg',
+		iconPath: '/src/ico/folder.svg',
 	}, default: {
-		iconPath: '/fileapp/src/ico/file.svg',
+		iconPath: '/src/ico/file.svg',
 	}, audio: {
 		fileViewer: '',
 		filePreviewer: '',
-		iconPath: '/fileapp/src/ico/audiofile.svg',
+		iconPath: '/src/ico/audiofile.svg',
 	}, video: {
 		fileViewer: '',
 		filePreviewer: '',
-		iconPath: '/fileapp/src/ico/movie.svg',
+		iconPath: '/src/ico/movie.svg',
 	}, pdf: {
 		fileViewer: '',
 		filePreviewer: '',
-		iconPath: '/fileapp/src/ico/textfile.svg',
+		iconPath: '/src/ico/textfile.svg',
 	}, img: {
 		fileViewer: '',
 		filePreviewer: '',
-		iconPath: '/fileapp/src/ico/image.svg',
+		iconPath: '/src/ico/image.svg',
 	}, markdown: {
 		fileViewer: '',
 		filePreviewer: null,
-		iconPath: '/fileapp/src/ico/textfile.svg',
+		iconPath: '/src/ico/textfile.svg',
 	}, code: {
 		fileViewer: '',
 		filePreviewer: null,
-		iconPath: '/fileapp/src/ico/textfile.svg',
+		iconPath: '/src/ico/textfile.svg',
 	}, zip: {
 		fileViewer: null,
 		filePreviewer: null,
-		iconPath: '/fileapp/src/ico/zipfile.svg',
+		iconPath: '/src/ico/zipfile.svg',
 	}, presentation: {
 		fileViewer: null,
 		filePreviewer: null,
-		iconPath: '/fileapp/src/ico/presentationfile.svg'
+		iconPath: '/src/ico/presentationfile.svg'
 	}, exe: {
 		fileViewer: null,
 		filePreviewer: null,
-		iconPath: '/fileapp/src/ico/commandline.svg'
+		iconPath: '/src/ico/commandline.svg'
 	}
 }
 
@@ -2367,7 +2367,7 @@ const sidebar = {
 	icons: {
 		top: [
 			{
-				iconPath: '/fileapp/src/ico/bars3.svg',
+				iconPath: '/src/ico/bars3.svg',
 				text: ' ',
 				onClick: () => {
 					if (document.querySelector('.sidebar').dataset.state === 'open') {
@@ -2377,18 +2377,18 @@ const sidebar = {
 					}
 				}
 			}, {
-				iconPath: '/fileapp/src/ico/folder.svg',
+				iconPath: '/src/ico/folder.svg',
 				text: 'ファイル',
 				onClick: () => { }
 			}, {
-				iconPath: '/fileapp/src/ico/arrow_up_tray.svg',
+				iconPath: '/src/ico/arrow_up_tray.svg',
 				text: '追加したファイル',
 				onClick: () => { },
 				DetailElementHandle(element) {
 
 				}
 			}, {
-				iconPath: '/fileapp/src/ico/star.svg',
+				iconPath: '/src/ico/star.svg',
 				text: 'お気に入り',
 				onClick: () => { },
 				DetailElementHandle(element) {
@@ -2431,7 +2431,7 @@ const sidebar = {
 		],
 		bottom: [
 			{
-				iconPath: '/fileapp/src/ico/setting.svg',
+				iconPath: '/src/ico/setting.svg',
 				text: '設定',
 				onClick: () => {
 					new ContextMenu({
@@ -2439,7 +2439,7 @@ const sidebar = {
 							{
 								text: "ページの再読み込み",
 								onClick: () => location.reload(),
-								icon: '/fileapp/src/ico/reload.svg'
+								icon: '/src/ico/reload.svg'
 							}, {
 								type: 'line'
 							}, {
@@ -2448,27 +2448,27 @@ const sidebar = {
 									{
 										text: "ライトテーマ",
 										onClick: theme.Light,
-										icon: '/fileapp/src/ico/sun.svg'
+										icon: '/src/ico/sun.svg'
 									}, {
 										text: "ダークテーマ",
 										onClick: theme.Dark,
-										icon: '/fileapp/src/ico/moon.svg'
+										icon: '/src/ico/moon.svg'
 									}, {
 										text: "システムのテーマ",
 										onClick: theme.System
 									},
 								],
-								icon: '/fileapp/src/ico/chevron-right.svg'
+								icon: '/src/ico/chevron-right.svg'
 							}, {
 								type: 'line'
 							}, {
 								text: "設定",
 								onClick: modals.settings.Open,
-								icon: '/fileapp/src/ico/setting.svg'
+								icon: '/src/ico/setting.svg'
 							}, {
 								text: "背景画像",
 								onClick: modals.backgroundSelect.Open,
-								icon: '/fileapp/src/ico/image.svg'
+								icon: '/src/ico/image.svg'
 							}
 						]
 					}).Show()
@@ -2510,8 +2510,8 @@ for (const [key, value] of Object.entries(sidebar.icons)) {
 		if (iconSetting.DetailElementHandle) {
 			const expandButton = document.createElement('button')
 			expandButton.classList.add('sideButton_icon', 'sideButton_expandButton')
-			expandButton.style.webkitMaskImage = `url(/fileapp/src/ico/chevron-up.svg)`
-			expandButton.style.maskImage = `url(/fileapp/src/ico/chevron-up.svg)`
+			expandButton.style.webkitMaskImage = `url(/src/ico/chevron-up.svg)`
+			expandButton.style.maskImage = `url(/src/ico/chevron-up.svg)`
 			expandButton.style.rotate = '180deg'
 			button.appendChild(expandButton)
 
@@ -2580,7 +2580,7 @@ const theme = {
 const SetBackgroundImage = url => {
 	if (url) {
 		document.body.classList.add('using-background-image')
-		util.Css(`body.using-background-image .body::before {background-image:url("/fileapp/api/backgrounds/${url}")}`)
+		util.Css(`body.using-background-image .body::before {background-image:url("/api/backgrounds/${url}")}`)
 		localStorage.setItem('background-image', url)
 	}
 	else {

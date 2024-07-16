@@ -3,25 +3,25 @@
   "short_name": "ファイル置き場",
   "icons": [
     {
-      "src": "/fileapp/src/ico/appicons/icon_512x.png",
+      "src": "/src/ico/appicons/icon_512x.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
     },
     {
-      "src": "/fileapp/src/ico/appicons/maskable_icon_512x.png",
+      "src": "/src/ico/appicons/maskable_icon_512x.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
     },
     {
-      "src": "/fileapp/src/ico/appicons/icon_128x.png",
+      "src": "/src/ico/appicons/icon_128x.png",
       "type": "image/png",
       "sizes": "128x128",
       "purpose": "any"
     }
   ],
-  "start_url": "/fileapp/",
+  "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#fff",
@@ -36,17 +36,17 @@
   "protocol_handlers": [
     {
       "protocol": "web+fileapp",
-      "url": "/fileapp/?rel=protocolhandler&target=%s"
+      "url": "/?rel=protocolhandler&target=%s"
     }
   ],
   "shortcuts": [
     {
       "name": "ベータ版で起動",
-      "url": "/fileapp/?ver=beta",
+      "url": "/?ver=beta",
       "description": "ベータ版のためバグがある可能性があります",
       "icons": [
         {
-          "src": "/fileapp/src/ico/beta.png",
+          "src": "/src/ico/beta.png",
           "sizes": "512x512",
           "type": "image/png",
           "purpose": "any monochrome"
