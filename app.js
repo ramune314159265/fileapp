@@ -24,13 +24,23 @@ app.use(compression({
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use((req, res, next) => {
+const existScope = new Set()
+app.use(async (req, res, next) => {
     res.removeHeader('X-Powered-By')
     res.removeHeader('Server')
     res.setHeader('Service-Worker-Allowed', '/')
     const date = new Date()
     const time = Intl.DateTimeFormat("ja-JP", { timeStyle: "medium" }).format(date)
-    console.log(`[${time}] ${req.method}:${decodeURIComponent(req.path)}`)
+    const scope = req.headers.host.split(':')[0]
+    req.scope = scope
+    if (!existScope.has(scope)) {
+        if (await fs.exists(`./file/$${scope}/`)) {
+            existScope.add(scope)
+        } else {
+            await fs.mkdir(`./file/${scope}/`, { recursive: true })
+        }
+    }
+    console.log(`[${time}] ${scope} ${req.method}:${decodeURIComponent(req.path)}`)
     next()
 })
 const upload = multer({ dest: `${__dirname}/tmp/` }).single('filebody')
@@ -44,7 +54,7 @@ app.route('/api/files/*')
         // *のパスを取得
         const targetPath = request.params['0']
 
-        fs.stat(`./file/${targetPath}`)
+        fs.stat(`./file/${request.scope}/${targetPath}`)
             .then(async (result) => {
                 if (Object.keys(request.query).includes('info')) return response.status(200).json(result)
                 if (result.isFile()) {
@@ -53,7 +63,7 @@ app.route('/api/files/*')
                         const fileName = crypto.createHash('sha1')
                             .update(targetPath)
                             .digest()
-                        ffmpeg(`${__dirname}/file/${targetPath}`)
+                        ffmpeg(`${__dirname}/file/${request.scope}/${targetPath}`)
                             .on('end', async () => {
                                 if (await fs.exists(`./thumbnails/${fileName}.png`) !== true) return response.status(500).json({ code: "500", message: 'Server Error' })
                                 response.sendFile(`${__dirname}/thumbnails/${fileName}.png`)
@@ -66,16 +76,16 @@ app.route('/api/files/*')
                                 folder: path.join(__dirname, 'thumbnails')
                             })
                     }
-                    return response.sendFile(`${__dirname}/file/${targetPath}`)
+                    return response.sendFile(`${__dirname}/file/${request.scope}/${targetPath}`)
                 }
                 if (result.isDirectory()) {
                     try {
                         const files = []
                         const directories = []
-                        const readdir = await fs.readdir(`./file/${targetPath}`)
+                        const readdir = await fs.readdir(`./file/${request.scope}/${targetPath}`)
                         await Promise.all(
                             readdir.map(async (file) => {
-                                const stat = await fs.stat(`./file/${targetPath + file}`)
+                                const stat = await fs.stat(`./file/${request.scope}/${targetPath + file}`)
                                 stat.isDirectory() ? directories.push({ name: file, type: 'directory', size: stat.size }) : files.push({ name: file, type: 'file', size: stat.size })
                             })
                         )
@@ -98,7 +108,7 @@ app.route('/api/files/*')
         const targetPath = request.params['0']
 
         try {
-            await fs.lstat(`./file/${targetPath}`)
+            await fs.lstat(`./file/${request.scope}/${targetPath}`)
             response.status(200).json()
         } catch {
             response.status(404).json()
@@ -107,7 +117,7 @@ app.route('/api/files/*')
     .post((request, response) => {
         const targetPath = request.params['0']
         if (targetPath.endsWith('/')) {
-            fs.mkdir(`./file/${targetPath}`, { recursive: true })
+            fs.mkdir(`./file/${request.scope}/${targetPath}`, { recursive: true })
                 .then(() => response.status(201).json({ path: targetPath }))
                 .catch(() => { response.status(500).json({ code: "500", message: 'Server Error' }) })
             return
@@ -118,7 +128,7 @@ app.route('/api/files/*')
         if (source === 'upload') {
             upload(request, response, function (err) {
                 if (err) return response.status(500).json({ code: "500", message: 'upload failed' })
-                fs.copyFile(`./tmp/${request.file.filename}`, `./file/${targetPath}`)
+                fs.copyFile(`./tmp/${request.file.filename}`, `./file/${request.scope}/${targetPath}`)
                     .then(() => {
                         response.status(201).json({ path: targetPath })
                     })
@@ -144,7 +154,7 @@ app.route('/api/files/*')
                     }
                 }).prependListener('end', async () => {
                     if (type === 'audioonly') {
-                        await fs.copyFile(`./ytdl/${id}-audio.mp3`, `./file/${targetPath}.mp3`)
+                        await fs.copyFile(`./ytdl/${id}-audio.mp3`, `./file/${request.scope}/${targetPath}.mp3`)
                         response.write(JSON.stringify({ status: 'ended' }) + '\n')
                     } else if (type === 'both') {
                         response.write(JSON.stringify({ status: 'video download started' }) + '\n')
@@ -167,7 +177,7 @@ app.route('/api/files/*')
                                     .on('end', () => {
                                         response.write(JSON.stringify({ status: 'ended' }) + '\n')
                                     })
-                                    .save(`./file/${targetPath}.mp4`)
+                                    .save(`./file/${request.scope}/${targetPath}.mp4`)
                             }).pipe(fs.createWriteStream(`./ytdl/${id}-video.mp4`))
                     }
                 }).pipe(fs.createWriteStream(`./ytdl/${id}-audio.mp3`))
@@ -175,10 +185,9 @@ app.route('/api/files/*')
     })
     .delete((request, response) => {
         const targetPath = request.params['0']
-        fs.stat(`./file/${targetPath}`)
+        fs.stat(`./file/${request.scope}/${targetPath}`)
             .then(async (result) => {
-                // fsだと中身があると削除できないため
-                fs.remove(`./file/${targetPath}`)
+                fs.remove(`./file/${request.scope}/${targetPath}`)
                     .then(() => {
                         response.status(204).json()
                     })
@@ -200,14 +209,14 @@ app.route('/api/files/*')
 
         if (!(command && target)) return response.status(400).json({ code: "400", message: 'Bad request' })
 
-        const dir = path.dirname(`./file/${targetPath}`)
+        const dir = path.dirname(`./file/${request.scope}/${targetPath}`)
         if (command === 'rename') {
-            fs.rename(`./file/${targetPath}`, path.join(dir, target))
+            fs.rename(`./file/${request.scope}/${targetPath}`, path.join(dir, target))
                 .then(() => { response.status(200).json({ target: path.join(dir, target) }) })
                 .catch(() => { response.status(500).json({ code: "500", message: 'Server Error' }) })
         }
         if (command === 'move') {
-            fs.move(`./file/${targetPath}`, path.join(__dirname, 'file', target))
+            fs.move(`./file/${request.scope}/${targetPath}`, path.join(__dirname, 'file', target))
                 .then(() => { response.status(200).json({ target }) })
                 .catch(() => { response.status(500).json({ code: "500", message: 'Server Error' }) })
         }
