@@ -11,10 +11,10 @@ const cors = require('cors')
 const app = express()
 const ews = require('express-ws')(app)
 const ws = require('ws').Server
-const wss = new ws({ port: 7001 })
+//const wss = new ws({ port: 7001 })
 const compression = require('compression')
 const multer = require('multer')
-const ytdl = require('ytdl-core')
+const ytdl = require('@distube/ytdl-core')
 dotenv.config()
 app.use(compression({
     threshold: 0,
