@@ -1080,6 +1080,7 @@
 		}
 
 		.directoryViewer {
+			position: relative;
 			display: flex;
 			flex-direction: column;
 			align-items: stretch;
@@ -1100,6 +1101,26 @@
 			flex-direction: row;
 			align-items: center;
 			justify-content: space-evenly;
+		}
+
+		.fileAddFloatButton {
+			display: flex;
+			width: 64px;
+			height: 64px;
+			position: absolute;
+			bottom: 16px;
+			right: 16px;
+			padding: 0;
+			background: var(--background-secondary);
+			border: none;
+			border-radius: 100vh;
+			box-shadow: var(--shadow);
+			justify-content: center;
+			align-items: center;
+		}
+
+		.fileAddFloatButtonIcon {
+			width: 60%;
 		}
 
 		.directory {
@@ -1544,6 +1565,9 @@
 				<input type="text" class="search" placeholder="このフォルダ内のファイルを検索">
 			</div>
 			<div class="files"></div>
+			<button class="fileAddFloatButton">
+				<div class="fileAddFloatButtonIcon icon" style="--src:url(/src/ico/plus.svg)"></div>
+			</button>
 		</template>
 		<template id="settingSimpleTemplate">
 			<div class="settingChild">
@@ -3232,15 +3256,18 @@
 				this.parentElement.appendChild(this.clone)
 
 				this.searchInputElement = this.parentElement.querySelector('.search')
-				this.filesElement = this.parentElement.querySelector('.files');
+				this.filesElement = this.parentElement.querySelector('.files')
 				this.directoryUI.parentElement = this.filesElement
 				this.filesElement.dataset.layout = this.layout
-				this.directoryPathInputElement = this.parentElement.querySelector('.directory');
+				this.directoryPathInputElement = this.parentElement.querySelector('.directory')
 				this.directoryPathInputElement.value = this.path
 				this.parentElement.querySelector('button.back').addEventListener('click', e => {
 					const dirArray = this.path.split('/')
 					const targetPath = dirArray.slice(0, dirArray.length - 2).join('/') + '/'
 					this.ChangeDirectory(targetPath)
+				})
+				this.parentElement.querySelector('.fileAddFloatButton').addEventListener('click', e => {
+					modals.fileUploadList.Open()
 				})
 				this.searchInputElement.addEventListener('change', e => this.SetFilter({ search: e.target.value }))
 				return this
@@ -4670,8 +4697,8 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.40.0/min/vs/loader.min.js" defer
 		fetchpriority="low"></script>
 	<script type="text/javascript" src="/src/qrcode.js" defer fetchpriority="low"></script>
-	<link rel="stylesheet" href="/src/highlight/styles/monokai-sublime.min.css" media="print"
-		onload="this.media='all'" fetchpriority="low">
+	<link rel="stylesheet" href="/src/highlight/styles/monokai-sublime.min.css" media="print" onload="this.media='all'"
+		fetchpriority="low">
 	<link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" as="style"
 		onload="this.onload=null;this.rel='stylesheet'" fetchpriority="low" />
 	<link rel="preload" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.40.0/min/vs/editor/editor.main.min.css"
